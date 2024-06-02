@@ -1,14 +1,24 @@
+import os
+import glob
 from datetime import datetime, timedelta
 from airflow import DAG
 from airflow.operators.python import PythonOperator
 from custom_modules.etl.extract import extract
 from custom_modules.etl.transform import transform
+from custom_modules.etl.load import load
+
 
 default_args = {
     'owner': 'Daniel',
     'retries': 3,
     'retry_delay': timedelta(minutes=5)
 }
+
+def remove_csv_files():
+    files = glob.glob('csv/*')
+    for f in files:
+        os.remove(f)
+
 
 with DAG(
     dag_id='artist_dag',
@@ -28,8 +38,18 @@ with DAG(
     )
 
     task2 = PythonOperator(
-        task_id ="transform_artist",
+        task_id="transform_artist",
         python_callable=transform
     )
 
-    task1 >> task2
+    task3 = PythonOperator(
+        task_id='load_artist',
+        python_callable=load
+    )
+
+    task4 = PythonOperator(
+        task_id='remove_csv_files',
+        python_callable=remove_csv_files
+    )
+
+    task1 >> task2 >> task3 >> task4
