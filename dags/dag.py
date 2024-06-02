@@ -1,0 +1,35 @@
+from datetime import datetime, timedelta
+from airflow import DAG
+from airflow.operators.python import PythonOperator
+from custom_modules.etl.extract import extract
+from custom_modules.etl.transform import transform
+
+default_args = {
+    'owner': 'Daniel',
+    'retries': 3,
+    'retry_delay': timedelta(minutes=5)
+}
+
+with DAG(
+    dag_id='artist_dag',
+    description='ETL for artist',
+    start_date=datetime(2024,5,31),
+    default_args=default_args,
+    schedule='@daily'
+) as dag:
+
+    task1 = PythonOperator(
+        task_id='extract_artist',
+        python_callable=extract,
+        op_kwargs={"artist_list_paths": [
+            "artists/korean_artists.txt", 
+            'artists/jap_artists.txt']
+            }
+    )
+
+    task2 = PythonOperator(
+        task_id ="transform_artist",
+        python_callable=transform
+    )
+
+    task1 >> task2
