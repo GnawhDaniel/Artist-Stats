@@ -6,6 +6,7 @@ from airflow.operators.python import PythonOperator
 from custom_modules.etl.extract import extract
 from custom_modules.etl.transform import transform
 from custom_modules.etl.load import load
+import pendulum
 
 
 default_args = {
@@ -23,7 +24,7 @@ def remove_csv_files():
 with DAG(
     dag_id='artist_dag',
     description='ETL for artist',
-    start_date=datetime(2024,5,31),
+    start_date=pendulum.datetime(2024, 6, 1, tz="US/Central"),
     default_args=default_args,
     schedule='@daily'
 ) as dag:
