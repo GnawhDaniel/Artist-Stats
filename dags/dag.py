@@ -11,8 +11,8 @@ import pendulum
 
 default_args = {
     'owner': 'Daniel',
-    'retries': 3,
-    'retry_delay': timedelta(minutes=5)
+    'retries': 5,
+    'retry_delay': timedelta(seconds=5)
 }
 
 def remove_csv_files():
@@ -48,9 +48,9 @@ with DAG(
         python_callable=load
     )
 
-    task4 = PythonOperator(
-        task_id='remove_csv_files',
-        python_callable=remove_csv_files
-    )
+    # task4 = PythonOperator(
+    #     task_id='remove_csv_files',
+    #     python_callable=remove_csv_files
+    # )
 
-    task1 >> task2 >> task3 >> task4
+    task1 >> task2 >> task3 # >> task4

@@ -27,6 +27,16 @@ def load():
     with engine.connect() as conn:
         drop_table('temp_table', conn)
 
+        # Insert Names
+        names_table = pd.read_csv('csv/names_table.csv')
+        names_table.to_sql(name='temp_table', con=conn, index=False)
+        insert_sql = text("""INSERT INTO names
+                          (SELECT * FROM temp_table) 
+                          ON CONFLICT ON CONSTRAINT names_pkey DO NOTHING
+                          """)
+        conn.execute(insert_sql)
+        drop_table('temp_table', conn)
+
         # Insert Artists
         artists_table = pd.read_csv('csv/artists_table.csv')
         artists_table.to_sql(name='temp_table', con=conn, index=False)
@@ -46,17 +56,6 @@ def load():
         insert_sql = text("""INSERT INTO artist_genres
                           (SELECT * FROM temp_table) 
                           ON CONFLICT ON CONSTRAINT artist_genres_pkey DO NOTHING
-                          """)
-        conn.execute(insert_sql)
-        drop_table('temp_table', conn)
-
-
-        # Insert Names
-        names_table = pd.read_csv('csv/names_table.csv')
-        names_table.to_sql(name='temp_table', con=conn, index=False)
-        insert_sql = text("""INSERT INTO names
-                          (SELECT * FROM temp_table) 
-                          ON CONFLICT ON CONSTRAINT names_pkey DO NOTHING
                           """)
         conn.execute(insert_sql)
         drop_table('temp_table', conn)
