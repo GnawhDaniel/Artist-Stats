@@ -1,6 +1,13 @@
 .env
 __pycache__
-logs/*
+
+
 etl-artists.pem
+
 test.ipynb
+test.py
+
 history/
+logs/*
+
+to_csv.ipynb
