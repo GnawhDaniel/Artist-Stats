@@ -1,6 +1,6 @@
 from datetime import UTC
 from uuid import uuid4
-from sqlalchemy import Column, DateTime, String, Text
+from sqlalchemy import Column, DateTime, String, Text, Date, Integer
 from database import Base
 from sqlalchemy.dialects.postgresql import UUID
 
@@ -17,3 +17,16 @@ class User(Base):
     session_id = Column(Text)
     session_id_expiry = Column(DateTime(timezone=True), server_default='CURRENT_TIMESTAMP')
     user_role = Column(String, server_default='user')
+
+
+class ArtistStats(Base):
+    __tablename__ = 'artists'
+    artist_id = Column(String, primary_key=True, index=True)
+    date = Column(Date, primary_key=True)
+    followers = Column(Integer)
+    
+
+class Artists(Base):
+    __tablename__ = 'names'
+    artist_id = Column(String, primary_key=True, index=True)
+    artist_name = Column(String)
