@@ -5,18 +5,17 @@ export async function middleware(request: NextRequest) {
   console.log("MIDDLEWARE LOG:");
   let cookie = request.cookies.get("session_id");
   
-  console.log("test")
   if (!cookie && !request.url.endsWith("/login")) {
-    console.log("return to home page");
-    return NextResponse.redirect(new URL("/", request.url));
+    console.log("return to login");
+    return NextResponse.redirect(new URL("/login", request.url));
   } else if (cookie && request.url.endsWith("/login")) {
     console.log("Redirecting to dashboard.");
-    return NextResponse.redirect(new URL("/user", request.url));
+    return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/user/:path*", "/login"],
+  matcher: ["/dashboard/:path*", "/login"],
 };
