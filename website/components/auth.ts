@@ -5,9 +5,13 @@ export async function isAuthenticated(access_token: string) {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
-      Authorizaion: `Bearer ${access_token}`,
+      Authorization: `Bearer ${access_token}`,
     },
+    credentials: "include"
   });
-
-  return response.json();
+  console.log(response)
+  if (response.status == 200) {
+    return true;
+  }
+  return false;
 }
