@@ -20,3 +20,5 @@ todo.txt
 
 aws-api/routers/auth.py
 aws-api/.git
+
+.vscode

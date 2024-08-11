@@ -15,6 +15,9 @@ const config: Config = {
       },
       dropShadow: {
         'glow': '0px 0px 100px 100px #fff',
+      },
+      colors: {
+        secondary: 'rgb(255, 255, 255)'
       }
     },
   },
