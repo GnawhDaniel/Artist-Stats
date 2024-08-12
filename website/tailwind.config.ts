@@ -22,6 +22,9 @@ const config: Config = {
       animation: {
         'shake': 'shake 0.5s cubic-bezier(.36,.07,.19,.97) infinite'
       },
+      maxHeight: {
+        'searchPopUp': '45rem',
+      }
     },
   },
   plugins: [],

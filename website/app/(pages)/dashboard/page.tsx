@@ -2,24 +2,17 @@
 import Search from "@/components/search";
 import Sidebar from "@/components/sidebar";
 import Graph from "@/components/graph";
-import { use, useState } from "react";
+import { useEffect, useState } from "react";
 import List from "@/components/List";
+import { getAllArtists, getSingleArtist } from "@/components/api";
+import { usePathname } from "next/navigation";
 
-let test = [
-  { date: "08-09-2024", followers: 123 },
-  { date: "08-10-2024", followers: 1244 },
-  { date: "08-11-2024", followers: 1255 },
-  { date: "08-12-2024", followers: 1000 },
-  { date: "08-13-2024", followers: null },
-  { date: "08-14-2024", followers: 1100 },
-];
-test = [];
 
 function VerticalText({ text }: { text: string }) {
   if (!text) {
-    return <></>
+    return <></>;
   }
-  
+
   return (
     <div
       style={{
@@ -36,9 +29,7 @@ function VerticalText({ text }: { text: string }) {
   );
 }
 
-
 export default function Dashboard() {
-  const currentPath = "";
   const [data, setData] = useState([]);
   const [minimum, setMinimum] = useState(0);
   const [maximum, setMax] = useState(0);
@@ -48,19 +39,29 @@ export default function Dashboard() {
 
   const handleSearchResult = (data: any) => {
     SetArtists(data);
-    console.log(artists);
   };
 
+  // Call get all artists on page load
+  useEffect(() => {
+    async function init() {
+      const res = await getAllArtists();
+      console.log(res)
+      const sortedRes = res.sort(
+        (a: { artist_name: string }, b: { artist_name: string }) => (
+          a.artist_name.toLowerCase() > b.artist_name.toLowerCase()
+        )
+      );
+      SetArtists(sortedRes);
+    }
+    init();
+  }, []);
+
   const onClickArtist = async (artist_id: string, artist_name: string) => {
-    const response = await fetch(`http://localhost:8000/artists/${artist_id}`, {
-      method: "GET",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-    });
-    const res = await response.json();
+    const res = await getSingleArtist(artist_id);
+    SetArtists([]);
     setData(res["data"]);
-    setMinimum(res["min_followers"]);
-    setMax(res["max_followers"]);
+    setMinimum(res["min_followers"]["followers"]);
+    setMax(res["max_followers"]["followers"]);
     setArtist(artist_name);
   };
 
@@ -78,7 +79,7 @@ export default function Dashboard() {
               viewBox="0 0 24 24"
               stroke-width="1.5"
               stroke="currentColor"
-              className="size-8 text-red-600 bg-gray-500 rounded-full"
+              className="size-8 text-white bg-red-600 rounded-full hover:bg-red-700 transition-all"
             >
               <path
                 stroke-linecap="round"
@@ -87,8 +88,8 @@ export default function Dashboard() {
               />
             </svg>
           </button>
-          <div className="p-14">
-            <div className="relative w-full">
+          <div className="p-14 flex justify-center">
+            <div className="relative w-[50%] left-auto right-auto">
               <Search onSearchResult={handleSearchResult}></Search>
               <div
                 className="z-20 absolute bg-gray-600 p-3 rounded-md w-full"
@@ -105,7 +106,7 @@ export default function Dashboard() {
 
       <div className="flex max-w-[90%] w-full">
         <div>
-          <Sidebar username="xxxxxxxxxxxxxxx" currentPath={currentPath} />
+          <Sidebar username="xxxxxxxxxxxxxxx" currentPath={usePathname() ?? ""} />
         </div>
         <button
           className="absolute top-0 right-0 p-5"

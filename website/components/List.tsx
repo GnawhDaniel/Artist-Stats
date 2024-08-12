@@ -4,20 +4,22 @@ interface ListProps {
 }
 
 export default function List({ artists, onClickArtist }: ListProps) {
-    if (artists.length === 0){
-        return <></>
-    }
-    console.log(artists)
-    return (
-    <div>
+  if (artists.length === 0) {
+    return <></>;
+  }
+  return (
+    <div className="max-h-80 lg:max-h-searchPopUp overflow-y-auto">
       <ul>
         {artists.map((artist, index) => (
           <div>
-            <li key={index}>
-              <button onClick={() => onClickArtist(artist["artist_id"], artist["artist_name"])}>
-                {artist["artist_name"]}
-              </button>
-            </li>
+            <button
+              className="w-full hover:bg-gray-700"
+              onClick={() =>
+                onClickArtist(artist["artist_id"], artist["artist_name"])
+              }
+            >
+              <li key={index}>{artist["artist_name"]}</li>
+            </button>
           </div>
         ))}
       </ul>

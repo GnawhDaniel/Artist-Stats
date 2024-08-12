@@ -1,6 +1,11 @@
 "use server";
 
-export async function isAuthenticated(access_token: string) {
+export async function isAuthenticated(access_token: string | undefined) {
+  if (access_token === undefined)
+  {
+    return false;
+  }
+
   const response = await fetch(process.env.API_ENDPOINT + "/auth/users/me", {
     method: "GET",
     headers: {
@@ -9,7 +14,6 @@ export async function isAuthenticated(access_token: string) {
     },
     credentials: "include"
   });
-  console.log(response)
   if (response.status == 200) {
     return true;
   }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { searchArtists } from "@/components/api";
 
 export default function Search({onSearchResult}: {onSearchResult: (data: any) => void}) {
   const [query, setQuery] = useState<string>("");
@@ -8,14 +9,7 @@ export default function Search({onSearchResult}: {onSearchResult: (data: any) =>
   const handleSearchResult = async (e: any) => {
     e.preventDefault();
 
-    const response = await fetch(`http://localhost:8000/artists/getall?query=${query}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-    });
-    const data = await response.json();
+    const data = await searchArtists(query);
     console.log(data);
     onSearchResult(data);
   };
