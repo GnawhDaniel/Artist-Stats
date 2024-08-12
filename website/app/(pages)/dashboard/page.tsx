@@ -4,8 +4,9 @@ import Sidebar from "@/components/sidebar";
 import Graph from "@/components/graph";
 import { useEffect, useState } from "react";
 import List from "@/components/List";
-import { getAllArtists, getSingleArtist } from "@/components/api";
+import { getAllArtists, getSingleArtist, getUser } from "@/components/api";
 import { usePathname } from "next/navigation";
+import { User } from "@/components/interfaces";
 
 
 function VerticalText({ text }: { text: string }) {
@@ -36,6 +37,7 @@ export default function Dashboard() {
   const [artists, SetArtists] = useState([]);
   const [searchWindow, setSearchWindow] = useState(false);
   const [currentArtist, setArtist] = useState("");
+  const [user, setUser] = useState<User>();
 
   const handleSearchResult = (data: any) => {
     SetArtists(data);
@@ -45,13 +47,16 @@ export default function Dashboard() {
   useEffect(() => {
     async function init() {
       const res = await getAllArtists();
-      console.log(res)
       const sortedRes = res.sort(
         (a: { artist_name: string }, b: { artist_name: string }) => (
           a.artist_name.toLowerCase() > b.artist_name.toLowerCase()
         )
       );
       SetArtists(sortedRes);
+      
+      const user = await getUser();
+      setUser(user);
+
     }
     init();
   }, []);
@@ -106,7 +111,7 @@ export default function Dashboard() {
 
       <div className="flex max-w-[90%] w-full">
         <div>
-          <Sidebar username="xxxxxxxxxxxxxxx" currentPath={usePathname() ?? ""} />
+          <Sidebar username={user?.username ?? ""} currentPath={usePathname() ?? ""} />
         </div>
         <button
           className="absolute top-0 right-0 p-5"

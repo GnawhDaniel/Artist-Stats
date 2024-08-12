@@ -7,6 +7,8 @@ export async function middleware(request: NextRequest) {
   let cookie = request.cookies.get("session_id");
 
   const authenticated = await isAuthenticated(cookie?.value);
+
+  // let authenticated =true;
   if (!authenticated && !request.url.endsWith("/login")) {
     console.log("return to login");
     return NextResponse.redirect(new URL("/login", request.url));

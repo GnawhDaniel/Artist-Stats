@@ -10,7 +10,6 @@ export default function Search({onSearchResult}: {onSearchResult: (data: any) =>
     e.preventDefault();
 
     const data = await searchArtists(query);
-    console.log(data);
     onSearchResult(data);
   };
 

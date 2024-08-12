@@ -5,7 +5,7 @@ export async function getSingleArtist(artist_id: string) {
     credentials: "include",
   });
   if (!response.ok) {
-    throw new Error('Failed to fetch artist');
+    throw new Error("Failed to fetch artist");
   }
   return await response.json();
 }
@@ -15,24 +15,36 @@ export async function searchArtists(query: string) {
     method: "GET",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
-  })
+  });
   if (!response.ok) {
     if (!response.ok) {
-      throw new Error('Failed to fetch artists');
+      throw new Error("Failed to fetch artists");
     }
   }
   return await response.json();
-
 }
 
 export async function getAllArtists() {
-  const response = await fetch('/api/artists', {
+  const response = await fetch("/api/artists", {
     method: "GET",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
   });
   if (!response.ok) {
-    throw new Error('Failed to fetch artists');
+    throw new Error("Failed to fetch artists");
   }
   return await response.json();
+}
+
+export async function getUser() {
+  const response = await fetch("/api/auth/user/me", {
+    method: "GET",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+  });
+  if (!response.ok) {
+    throw new Error("Failed to fetch user info.");
+  }
+  const res = await response.json()
+  return res;
 }
