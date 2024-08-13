@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { searchArtists } from "@/components/api";
+import { searchArtists } from "@/functions/api";
 
 export default function Search({onSearchResult}: {onSearchResult: (data: any) => void}) {
   const [query, setQuery] = useState<string>("");

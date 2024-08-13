@@ -2,8 +2,8 @@
 "use client";
 import React, { useState } from "react";
 import { submitLoginForm } from "./submitLoginForm";
-import { navigate } from "@/components/actions";
-import { isAuthenticated } from "@/components/auth";
+import { navigate } from "@/functions/actions";
+import { isAuthenticated } from "@/functions/auth";
 
 const Login = () => {
   const [username, setUsername] = useState("");

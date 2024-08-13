@@ -4,10 +4,10 @@ import Sidebar from "@/components/sidebar";
 import Graph from "@/components/graph";
 import { useEffect, useState } from "react";
 import List from "@/components/List";
-import { getAllArtists, getSingleArtist, getUser } from "@/components/api";
-import { usePathname } from "next/navigation";
+import { getAllArtists, getSingleArtist, getUser } from "@/functions/api";
+import { usePathname, useSearchParams } from "next/navigation";
 import { User } from "@/components/interfaces";
-
+import { loadingElement } from "@/components/loading";
 
 function VerticalText({ text }: { text: string }) {
   if (!text) {
@@ -31,6 +31,7 @@ function VerticalText({ text }: { text: string }) {
 }
 
 export default function Dashboard() {
+  const [loading, setLoading] = useState(true);
   const [data, setData] = useState([]);
   const [minimum, setMinimum] = useState(0);
   const [maximum, setMax] = useState(0);
@@ -38,6 +39,7 @@ export default function Dashboard() {
   const [searchWindow, setSearchWindow] = useState(false);
   const [currentArtist, setArtist] = useState("");
   const [user, setUser] = useState<User>();
+  // const searchParams = useSearchParams();
 
   const handleSearchResult = (data: any) => {
     SetArtists(data);
@@ -48,22 +50,34 @@ export default function Dashboard() {
     async function init() {
       const res = await getAllArtists();
       const sortedRes = res.sort(
-        (a: { artist_name: string }, b: { artist_name: string }) => (
-          a.artist_name.toLowerCase() > b.artist_name.toLowerCase()
-        )
+        (a: { artist_name: string }, b: { artist_name: string }) =>
+          a.artist_name.toLowerCase() > b.artist_name.toLowerCase() ? 1 : -1
       );
       SetArtists(sortedRes);
-      
+
       const user = await getUser();
       setUser(user);
 
+      setLoading(false);
+
+      // if (searchParams) {
+      //   const artist_id = searchParams.get("artist");
+      //   const artist_name = searchParams.get("artist_name");
+      //   onClickArtist(artist_id ?? "", artist_name ?? "");
+      // }
+      const storedData = sessionStorage.getItem("redirectData");
+      if (storedData) {
+        const data = JSON.parse(storedData);
+        sessionStorage.removeItem("redirectData");
+        onClickArtist(data?.artist_id ?? "", data.artist_name ?? "");
+      }
     }
     init();
   }, []);
 
   const onClickArtist = async (artist_id: string, artist_name: string) => {
     const res = await getSingleArtist(artist_id);
-    SetArtists([]);
+    // SetArtists([]);
     setData(res["data"]);
     setMinimum(res["min_followers"]["followers"]);
     setMax(res["max_followers"]["followers"]);
@@ -108,10 +122,12 @@ export default function Dashboard() {
       ) : (
         <></>
       )}
-
       <div className="flex max-w-[90%] w-full">
         <div>
-          <Sidebar username={user?.username ?? ""} currentPath={usePathname() ?? ""} />
+          <Sidebar
+            username={user?.username ?? ""}
+            currentPath={usePathname() ?? ""}
+          />
         </div>
         <button
           className="absolute top-0 right-0 p-5"
@@ -132,10 +148,16 @@ export default function Dashboard() {
             />
           </svg>
         </button>
-        <div className="flex flex-col w-full p-4 gap-5">
-          <Graph data={data} minimum={minimum} maximum={maximum}></Graph>
-        </div>
-        <VerticalText text={currentArtist} />{" "}
+        {loading ? (
+          loadingElement
+        ) : (
+          <>
+            <div className="flex flex-col w-full p-4 gap-5">
+              <Graph data={data} minimum={minimum} maximum={maximum}></Graph>
+            </div>
+            <VerticalText text={currentArtist} />
+          </>
+        )}
       </div>
     </div>
   );

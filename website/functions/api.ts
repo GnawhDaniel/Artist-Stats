@@ -1,3 +1,14 @@
+export async function getSpotifySearch(query: string) {
+  const response = await fetch(`/api/search?query=${query}`, {
+    method: "GET",
+    headers: { "Content-Type": "application/json" },
+  })
+  if (!response.ok) {
+    throw new Error("Failed to fetch artist from Spotify");
+  }
+  return await response.json();
+}
+
 export async function getSingleArtist(artist_id: string) {
   const response = await fetch(`/api/artists/${artist_id}`, {
     method: "GET",

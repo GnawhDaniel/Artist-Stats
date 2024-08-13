@@ -1,11 +1,12 @@
 "use client";
-import { getAllArtists, getUser } from "@/components/api";
+import { getAllArtists, getSpotifySearch, getUser } from "@/functions/api";
 import FollowerCount from "@/components/followerCount";
 import List from "@/components/List";
 import Sidebar from "@/components/sidebar";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import {User} from "@/components/interfaces"
+import { User } from "@/components/interfaces";
+import { navigate } from "@/functions/actions";
 
 const loadingElement = (
   <div className="flex w-full min-h-screen justify-center items-center">
@@ -33,27 +34,27 @@ export default function MyArtists() {
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<User>();
 
-
   useEffect(() => {
     async function init() {
       const res = await getAllArtists();
-      console.log(res);
       const sortedRes = res.sort(
         (a: { artist_name: string }, b: { artist_name: string }) =>
-          a.artist_name.toLowerCase() > b.artist_name.toLowerCase()
+          a.artist_name.toLowerCase() > b.artist_name.toLowerCase() ? 1 : -1
       );
-      setArtists(sortedRes);
-      
+      setArtists(sortedRes);      
+      console.log("SORTTED", sortedRes)
+
       const user = await getUser();
       setUser(user);
-      
+
       setLoading(false);
     }
     init();
   }, []);
 
   const onClickArtist = async (artist_id: string, artist_name: string) => {
-
+    sessionStorage.setItem("redirectData", JSON.stringify({"artist_id": artist_id, "artist_name": artist_name}));
+    navigate(`/dashboard`);
   };
 
   return (
@@ -66,12 +67,18 @@ export default function MyArtists() {
           />
         </div>
         {!loading ? (
-          <div className="flex p-4">
+          <div className="p-4 grid grid-cols-3 gap-5">
             <section>
-              <FollowerCount followerCount={artists.length}></FollowerCount>
+              <div>
+                <FollowerCount className="bg-blue-700" followerCount={artists.length}></FollowerCount>
+              </div>
             </section>
-            <section className="">
-              <List artists={artists} onClickArtist={onClickArtist}></List>
+            <section>
+              <div className="flex flex-col bg-purple-700 p-4 rounded-3xl">
+                <h1>Following</h1>
+                <hr className="border-t-2 border-purple-500 my-2" />
+                <List className="hover:bg-purple-500 rounded-lg" onClickArtist={onClickArtist} artists={artists}></List>
+              </div>
             </section>
           </div>
         ) : (

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { NextRequest } from "next/server";
-import { isAuthenticated } from "./components/auth";
+import { isAuthenticated } from "./functions/auth";
 
 export async function middleware(request: NextRequest) {
   console.log("MIDDLEWARE LOG:");

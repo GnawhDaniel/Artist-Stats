@@ -12,7 +12,6 @@ export default async function handler(
   res: NextApiResponse
 ) {
   try {
-    let apiURL = `${process.env.API_ENDPOINT}/auth/user/me`;
     const cookieString = req.headers.cookie ?? "";
     const sessionID = getCookieValue(cookieString, "session_id");
 
