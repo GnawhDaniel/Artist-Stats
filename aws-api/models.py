@@ -30,3 +30,12 @@ class Artists(Base):
     __tablename__ = 'names'
     artist_id = Column(String, primary_key=True, index=True)
     artist_name = Column(String)
+
+
+class MasterArtistView(Base):
+    __tablename__ = "artist_master"
+    artist_id = Column(UUID(as_uuid=True), primary_key=True, index=True)
+    artist_name = Column(String)
+    date = Column(DateTime(timezone=True))
+    followers = Column(Integer)
+    genres = Column(String)

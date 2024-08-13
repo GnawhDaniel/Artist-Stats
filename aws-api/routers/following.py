@@ -1,8 +1,9 @@
 from typing import Annotated, Optional
 from fastapi import APIRouter, Depends, Cookie, HTTPException
+from sqlalchemy import UUID, text
 from utils import db_dependency, is_access_token_expired
 from starlette import status
-from models import User, ArtistStats, Artists
+from models import User, ArtistStats, Artists, MasterArtistView
 from .auth import get_current_user
 
 router = APIRouter(
@@ -30,6 +31,18 @@ async def fetch_artists_query(db: db_dependency, query: str | None = None, sessi
             Artists.artist_name.ilike(f'%{query}%')).all()
     return artists
 
+@router.get("/getgenrecount")
+async def test(db: db_dependency, session_id: Annotated[str | None, Cookie()] = None):
+    
+    if not session_id:  # Must check this because of DB schema design
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Could not find user session")
+
+    user = await get_current_user(db, session_id)
+
+    query = text("SELECT * FROM get_genre_counts(:user_id)")
+    res = db.execute(query, {'user_id': user.id})
+    return {"result": [{"label": genre, "value": count} for genre, count in res]}
 
 @router.get("/{id}", status_code=status.HTTP_200_OK)
 async def fetch_artist_stats(
