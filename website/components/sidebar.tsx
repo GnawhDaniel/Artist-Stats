@@ -24,10 +24,10 @@ export default function Sidebar({
             <a href="my-artists" className="group">
               <li className={linkClass("/my-artists")}>My Artists</li>
             </a>
-            <a href="/discover" className="group">
+            <a className="group cursor-pointer">
               <li className={linkClass("/discover")}>Discover (WIP)</li>
             </a>
-            <a href="/playlists" className="group">
+            <a className="group cursor-pointer">
               <li className={linkClass("/playlists")}>Playlists (WIP)</li>
             </a>
             <a href="/settings" className="group">

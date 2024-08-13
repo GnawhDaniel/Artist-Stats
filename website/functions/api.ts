@@ -59,3 +59,16 @@ export async function getUser() {
   const res = await response.json()
   return res;
 }
+
+export async function getGenreCount() {
+  const response = await fetch("/api/genres", {
+    method: "GET",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+  });
+  if (!response.ok) {
+    throw new Error("Failed to fetch user's genres.");
+  }
+  const res = await response.json()
+  return res;
+}
