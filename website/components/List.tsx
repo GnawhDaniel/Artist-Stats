@@ -22,7 +22,15 @@ export default function List({ artists, onClickArtist, className }: ListProps) {
                 onClickArtist(artist["artist_id"], artist["artist_name"])
               }
             >
-              {artist.image_url ? <img className="rounded-full w-9" src={artist.image_url} alt="" /> : <></>}{" "}
+              {artist.image_url ? (
+                <img
+                  className="rounded-full w-9"
+                  src={artist.image_url}
+                  alt=""
+                />
+              ) : (
+                <></>
+              )}{" "}
               <li>{artist["artist_name"]}</li>
             </button>
           </div>
@@ -35,10 +43,20 @@ export default function List({ artists, onClickArtist, className }: ListProps) {
 interface PropAdd {
   artists: any[];
   artistSet: Set<string>;
-  onClickArtist: (artist_id: string, artist_name: string) => Promise<void>;
+  onClickArtist: (
+    artist_id: string,
+    artist_name: string,
+    followers: number,
+    image_url: string
+  ) => Promise<void>;
   className?: string;
 }
-export function ListAdd({ artists, onClickArtist, className, artistSet }: PropAdd) {
+export function ListAdd({
+  artists,
+  onClickArtist,
+  className,
+  artistSet,
+}: PropAdd) {
   if (artists.length === 0) {
     return <></>;
   }
@@ -48,22 +66,35 @@ export function ListAdd({ artists, onClickArtist, className, artistSet }: PropAd
       <ul>
         {artists.map((artist, index) => {
           const isArtistInSet = artistSet.has(artist["artist_id"]);
-          console.log(artist['artist_name'], isArtistInSet)
           return (
             <div key={index} className="">
               <button
                 className={`flex items-center gap-3 w-full p-2 ${
-                  isArtistInSet ? 'line-through text-gray-500' : className ? className : "hover:bg-gray-700"
+                  isArtistInSet
+                    ? "line-through text-gray-500"
+                    : className
+                    ? className
+                    : "hover:bg-gray-700"
                 }`}
                 onClick={
                   isArtistInSet
                     ? undefined
-                    : () => onClickArtist(artist["artist_id"], artist["artist_name"])
+                    : () =>
+                        onClickArtist(
+                          artist["artist_id"],
+                          artist["artist_name"],
+                          artist["followers"],
+                          artist["image_url"]
+                        )
                 }
                 disabled={isArtistInSet}
               >
                 {artist.image_url ? (
-                  <img className="rounded-full w-9" src={artist.image_url} alt="" />
+                  <img
+                    className="rounded-full w-9"
+                    src={artist.image_url}
+                    alt=""
+                  />
                 ) : (
                   <></>
                 )}{" "}

@@ -4,18 +4,22 @@ from sqlalchemy import Column, DateTime, String, Text, Date, Integer
 from database import Base
 from sqlalchemy.dialects.postgresql import UUID
 
+
 class User(Base):
     __tablename__ = 'user_info'
-    __table_args__= {'schema': 'auth'}
-    id = Column(UUID(as_uuid=True), primary_key=True, index=True, default=uuid4)
+    __table_args__ = {'schema': 'auth'}
+    id = Column(UUID(as_uuid=True), primary_key=True,
+                index=True, default=uuid4)
     email = Column(String, unique=True, nullable=False)
     username = Column(String, unique=True, nullable=False)
     firstname = Column(String, nullable=False)
     lastname = Column(String, nullable=False)
     hashed_password = Column(Text, nullable=False)
-    created_date = Column(DateTime(timezone=True), server_default='CURRENT_TIMESTAMP')
+    created_date = Column(DateTime(timezone=True),
+                          server_default='CURRENT_TIMESTAMP')
     session_id = Column(Text)
-    session_id_expiry = Column(DateTime(timezone=True), server_default='CURRENT_TIMESTAMP')
+    session_id_expiry = Column(
+        DateTime(timezone=True), server_default='CURRENT_TIMESTAMP')
     user_role = Column(String, server_default='user')
 
 
@@ -24,7 +28,7 @@ class ArtistStats(Base):
     artist_id = Column(String, primary_key=True, index=True)
     date = Column(Date, primary_key=True)
     followers = Column(Integer)
-    
+
 
 class Artists(Base):
     __tablename__ = 'names'
@@ -39,3 +43,11 @@ class MasterArtistView(Base):
     date = Column(DateTime(timezone=True))
     followers = Column(Integer)
     genres = Column(String)
+
+
+class UserFollowing(Base):
+    __tablename__ = "user_following"
+    __table_args__ = {'schema': 'auth'}
+    id = Column(UUID(as_uuid=True), primary_key=True, index=True)
+    artist_id = Column(String, primary_key=True, index=True)
+    followed_date = Column(DateTime(timezone=True))

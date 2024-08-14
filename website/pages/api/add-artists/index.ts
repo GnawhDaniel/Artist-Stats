@@ -14,27 +14,44 @@ export default async function handler(
   if (req.method === "POST") {
     try {
       const { artist_id, artist_name, image_url, followers }: Artist = req.body;
-      console.log(artist_id, artist_name, image_url, followers)
-      // Here you would typically:
-      // 1. Validate the input
-      // 2. Connect to your database
-      // 3. Add the artist to the database
-      // 4. Handle any errors that might occur
+      console.log(req.body);
+      const response = await fetch(
+        process.env.API_ENDPOINT + "/artists/add-artist",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Cookie: req.headers.cookie || "",
+          },
+          body: JSON.stringify({
+            "artist_id": artist_id,
+            "artist_name": artist_name,
+            "image_url": image_url,
+            "followers": followers,
+          }),
+          credentials: "include",
+        }
+      );
 
-      // For this example, we'll just echo back the received data
-      res
-        .status(200)
-        .json({
-          message: "Artist added successfully",
-          artist: { artist_id, artist_name, image_url, followers },
-        });
-    } catch (error) {
-      res
-        .status(500)
-        .json({ message: "Error adding artist", error: error.message });
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || "Failed to add artist");
+      }
+
+      const data = await response.json();
+      console.log(response);
+
+      res.status(200).json(data);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        res
+          .status(500)
+          .json({ message: "Error adding artist", error: error.message });
+      } else {
+        res.status(500).json({ message: "An unknown error occurred" });
+      }
     }
   } else {
-    // Handle any other HTTP method
     res.setHeader("Allow", ["POST"]);
     res.status(405).end(`Method ${req.method} Not Allowed`);
   }
