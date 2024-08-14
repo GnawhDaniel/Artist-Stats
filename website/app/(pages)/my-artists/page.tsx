@@ -109,13 +109,15 @@ export default function MyArtists() {
     artist_id: string,
     artist_name: string,
     followers: number,
-    image_url: string
+    image_url: string,
+    genres: string[]
   ) => {
     const res = await addArtistToUser(
       artist_id,
       artist_name,
       image_url,
-      followers
+      followers,
+      genres
     );
     console.log(res);
     if ("code" in res && res.code == 200) {

@@ -38,7 +38,7 @@ class Artists(Base):
 
 class MasterArtistView(Base):
     __tablename__ = "artist_master"
-    artist_id = Column(UUID(as_uuid=True), primary_key=True, index=True)
+    artist_id = Column(String, primary_key=True, index=True)
     artist_name = Column(String)
     date = Column(DateTime(timezone=True))
     followers = Column(Integer)
@@ -51,3 +51,11 @@ class UserFollowing(Base):
     id = Column(UUID(as_uuid=True), primary_key=True, index=True)
     artist_id = Column(String, primary_key=True, index=True)
     followed_date = Column(DateTime(timezone=True))
+    
+
+class ArtistGenres(Base):
+    __tablename__ = "artist_genres"
+    __table_args__ = {'schema': 'public'}
+
+    artist_id = Column(String, primary_key=True, index=True)
+    genre = Column(String, primary_key=True)

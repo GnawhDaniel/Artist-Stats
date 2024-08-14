@@ -1,11 +1,11 @@
 import datetime
-from typing import Annotated, Optional
+from typing import Annotated, List, Optional
 from fastapi import APIRouter, Depends, Cookie, HTTPException
 from pydantic import BaseModel, Field
 from sqlalchemy import UUID, text
 from utils import db_dependency, is_access_token_expired
 from starlette import status
-from models import User, ArtistStats, Artists, MasterArtistView, UserFollowing
+from models import ArtistGenres, User, ArtistStats, Artists, MasterArtistView, UserFollowing
 from .auth import get_current_user
 
 router = APIRouter(
@@ -22,10 +22,12 @@ class addArtistReq(BaseModel):
     artist_name: str
     image_url: str
     followers: int
+    genres: List[str]
 
 
 @router.post("/add-artist", status_code=status.HTTP_200_OK)
 async def addArtist(db: db_dependency, artist: addArtistReq, session_id: Annotated[str | None, Cookie()] = None):
+    print(artist)
     # No token provided
     if not session_id:  # Must check this because of DB schema design
         raise HTTPException(
@@ -33,11 +35,15 @@ async def addArtist(db: db_dependency, artist: addArtistReq, session_id: Annotat
 
     user = await get_current_user(db, session_id)
 
+    print(artist)
+
     # Check if artist already exists
     existing_artist = db.query(Artists).filter(
         Artists.artist_id == artist.artist_id).first()
     if existing_artist:
         return {'code': '200', 'message': 'artist already exists in db'}
+    
+    # Add artist to tables
     else:
         try:
             # Add artist to names table
@@ -64,6 +70,16 @@ async def addArtist(db: db_dependency, artist: addArtistReq, session_id: Annotat
                 followed_date=datetime.datetime.now(tz=datetime.UTC)
             )
             db.add(artist_to_user)
+            db.commit()
+            
+            # Add artist genres to genres table
+            for genre in artist.genres:
+                print(genre)
+                genre_to_add = ArtistGenres(
+                    artist_id = artist.artist_id,
+                    genre = genre
+                )
+                db.add(genre_to_add)
             db.commit()
 
             return {'code': '200', 'message': f"successfully added {artist.artist_name} with artist id {artist.artist_id}"}

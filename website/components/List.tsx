@@ -47,7 +47,8 @@ interface PropAdd {
     artist_id: string,
     artist_name: string,
     followers: number,
-    image_url: string
+    image_url: string,
+    genres: string[]
   ) => Promise<void>;
   className?: string;
 }
@@ -84,7 +85,8 @@ export function ListAdd({
                           artist["artist_id"],
                           artist["artist_name"],
                           artist["followers"],
-                          artist["image_url"]
+                          artist["image_url"],
+                          artist["genres"]
                         )
                 }
                 disabled={isArtistInSet}

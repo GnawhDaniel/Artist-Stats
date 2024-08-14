@@ -14,7 +14,8 @@ function formatData(data: any) {
             "artist_id": obj[i].id,
             "artist_name": obj[i].name,
             "followers": obj[i].followers.total,
-            "image_url": obj[i].images[0]?.url ?? "/unknown.svg"
+            "image_url": obj[i].images[0]?.url ?? "/unknown.svg",
+            "genres": obj[i]?.genres || []
         })
     }
     return artistList;

@@ -78,6 +78,7 @@ export async function addArtistToUser(
   artist_name: string,
   image_url: string = "",
   followers: number = -1,
+  genres: string[] = []
 ) {
   const response = await fetch("/api/add-artists", {
     method: "POST",
@@ -88,6 +89,7 @@ export async function addArtistToUser(
       artist_name: artist_name,
       image_url: image_url,
       followers: followers,
+      genres: genres
     }),
   });
   if (!response.ok) {

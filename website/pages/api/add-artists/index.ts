@@ -5,6 +5,7 @@ type Artist = {
   artist_name: string;
   image_url: string;
   followers: number;
+  genres: string[];
 };
 
 export default async function handler(
@@ -13,7 +14,7 @@ export default async function handler(
 ) {
   if (req.method === "POST") {
     try {
-      const { artist_id, artist_name, image_url, followers }: Artist = req.body;
+      const { artist_id, artist_name, image_url, followers, genres }: Artist = req.body;
       console.log(req.body);
       const response = await fetch(
         process.env.API_ENDPOINT + "/artists/add-artist",
@@ -28,6 +29,7 @@ export default async function handler(
             "artist_name": artist_name,
             "image_url": image_url,
             "followers": followers,
+            "genres": genres
           }),
           credentials: "include",
         }
@@ -39,7 +41,6 @@ export default async function handler(
       }
 
       const data = await response.json();
-      console.log(response);
 
       res.status(200).json(data);
     } catch (error: unknown) {
