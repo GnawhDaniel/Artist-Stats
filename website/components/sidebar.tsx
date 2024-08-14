@@ -21,8 +21,8 @@ export default function Sidebar({
             <a href="/dashboard" className="group">
               <li className={linkClass("/dashboard")}>Dashboard</li>
             </a>
-            <a href="my-artists" className="group">
-              <li className={linkClass("/my-artists")}>My Artists</li>
+            <a href="graph" className="group">
+              <li className={linkClass("/graph")}>Graph</li>
             </a>
             <a className="group cursor-pointer">
               <li className={linkClass("/discover")}>Discover (WIP)</li>
@@ -30,11 +30,11 @@ export default function Sidebar({
             <a className="group cursor-pointer">
               <li className={linkClass("/playlists")}>Playlists (WIP)</li>
             </a>
-            <a href="/settings" className="group">
-              <li className={linkClass("/settings")}>Settings</li>
+            <a className="group cursor-pointer">
+              <li className={linkClass("/settings")}>Settings (WIP)</li>
             </a>
-            <a href="/help" className="group">
-              <li className={linkClass("/help")}>Help/FAQ</li>
+            <a href="/faq" className="group">
+              <li className={linkClass("/faq")}>FAQ</li>
             </a>
           </ul>
         </div>

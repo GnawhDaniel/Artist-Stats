@@ -1,162 +1,231 @@
 "use client";
-import Search from "@/components/search";
+import {
+  addArtistToUser,
+  getAllArtists,
+  getGenreCount,
+  getSpotifySearch,
+  getUser,
+} from "@/functions/api";
+import { FollowerCount, GenreCount } from "@/components/counters";
+import List, { ListAdd } from "@/components/List";
 import Sidebar from "@/components/sidebar";
-import Graph from "@/components/graph";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import List from "@/components/List";
-import { getAllArtists, getSingleArtist, getUser } from "@/functions/api";
-import { usePathname, useSearchParams } from "next/navigation";
 import { User } from "@/components/interfaces";
+import { navigate } from "@/functions/actions";
+import SimpleCharts from "@/components/PieChart";
 import { loadingElement } from "@/components/loading";
+import SearchBar from "@/components/SearchBar";
 
-function VerticalText({ text }: { text: string }) {
-  if (!text) {
-    return <></>;
-  }
+export default function MyArtists() {
+  /*
+  TODO:
+    - Do not keep calling api for every search query (for following component)
+      - Keep track of a local list by calling getallartist api upon page load
+      - When adding artist -> optimistic; change appropriate states and sets
+    - Add Profile Pictures on Following 
+      - Might have to add spotify url field onto names db table
+    - Delete feature on Following 
+  */
 
-  return (
-    <div
-      style={{
-        writingMode: "vertical-lr",
-        textOrientation: "upright",
-        letterSpacing: "-12px", // Adjust this value to reduce space between characters
-      }}
-      className="absolute right-2 top-20 bg-slate-800 p-2 rounded-3xl select-none"
-    >
-      {text.split("").map((char, index) => (
-        <span key={index}>{char}</span>
-      ))}
-    </div>
-  );
-}
+  const [genreCount, setGenreCount] = useState([]); // Sum of each genre (k-indie: 10, rap: 3, etc.)
+  const [genreSum, setGenreSum] = useState(0); // Sum of all distinct genres
 
-export default function Dashboard() {
+  // Keep track of all followed artists to mark already added artists in Add Artist component
+  const [allUserArtists, setAllUserArtists] = useState<any>(new Set());
+
+  // Search Result from Following Component
+  const [searchResult, setSearchResult] = useState([]);
+  const [artists, setArtists] = useState([]);
+
+  // Loading State
   const [loading, setLoading] = useState(true);
-  const [data, setData] = useState([]);
-  const [minimum, setMinimum] = useState(0);
-  const [maximum, setMax] = useState(0);
-  const [artists, SetArtists] = useState([]);
-  const [searchWindow, setSearchWindow] = useState(false);
-  const [currentArtist, setArtist] = useState("");
+
+  // Set User for username
   const [user, setUser] = useState<User>();
-  // const searchParams = useSearchParams();
 
-  const handleSearchResult = (data: any) => {
-    SetArtists(data);
-  };
+  // Success Message
+  const [addMsg, setAddMsg] = useState("");
 
-  // Call get all artists on page load
+  // Automatically hide state message after 15 seconds
+  useEffect(() => {
+    if (addMsg) {
+      const timer = setTimeout(() => {
+        setAddMsg("");
+      }, 15000); //
+
+      return () => clearTimeout(timer); // Cleanup the timer on component unmount or when addMsg changes
+    }
+  }, [addMsg]);
+
   useEffect(() => {
     async function init() {
+      // Get User Info
+      const user = await getUser();
+      setUser(user);
+
+      // Get all artists that user tracks
       const res = await getAllArtists();
       const sortedRes = res.sort(
         (a: { artist_name: string }, b: { artist_name: string }) =>
           a.artist_name.toLowerCase() > b.artist_name.toLowerCase() ? 1 : -1
       );
-      SetArtists(sortedRes);
+      setArtists(sortedRes);
+      const artistIds = sortedRes.map(
+        (artist: { artist_id: any }) => artist.artist_id
+      );
+      setAllUserArtists(new Set(artistIds));
 
-      const user = await getUser();
-      setUser(user);
+      // Load Top 10 Genres that User Follows
+      let genres = await getGenreCount();
+      genres = genres["result"];
+      const sortedGenres = genres.sort(
+        (a: { value: number }, b: { value: number }) => b.value - a.value
+      );
+      setGenreSum(genres.length);
+      const topGenres = sortedGenres.slice(0, Math.min(6, sortedGenres.length));
+      setGenreCount(topGenres);
 
+      // Stop loading here
       setLoading(false);
-
-      // if (searchParams) {
-      //   const artist_id = searchParams.get("artist");
-      //   const artist_name = searchParams.get("artist_name");
-      //   onClickArtist(artist_id ?? "", artist_name ?? "");
-      // }
-      const storedData = sessionStorage.getItem("redirectData");
-      if (storedData) {
-        const data = JSON.parse(storedData);
-        sessionStorage.removeItem("redirectData");
-        onClickArtist(data?.artist_id ?? "", data.artist_name ?? "");
-      }
     }
     init();
   }, []);
 
+  const searchFollowedArtists = async (data: any) => {
+    setArtists(data);
+  };
+
   const onClickArtist = async (artist_id: string, artist_name: string) => {
-    const res = await getSingleArtist(artist_id);
-    // SetArtists([]);
-    setData(res["data"]);
-    setMinimum(res["min_followers"]["followers"]);
-    setMax(res["max_followers"]["followers"]);
-    setArtist(artist_name);
+    sessionStorage.setItem(
+      "redirectData",
+      JSON.stringify({ artist_id: artist_id, artist_name: artist_name })
+    );
+    navigate(`/graph`);
+  };
+
+  const onSearchResult = async (data: any) => {
+    setSearchResult(data);
+  };
+
+  const addArtist = async (
+    artist_id: string,
+    artist_name: string,
+    followers: number,
+    image_url: string,
+    genres: string[]
+  ) => {
+    const res = await addArtistToUser(
+      artist_id,
+      artist_name,
+      image_url,
+      followers,
+      genres
+    );
+    console.log(res);
+    if ("code" in res && res.code == 200) {
+      setAddMsg(`${artist_name} was succesfully added.`);
+    }
+
+    // Create a new Set with the added artist_id
+    const updatedUserArtists = new Set(allUserArtists);
+    updatedUserArtists.add(artist_id);
+
+    setAllUserArtists(updatedUserArtists);
   };
 
   return (
     <div className="flex min-h-screen flex-col items-center">
-      {searchWindow ? (
-        <div className="flex flex-col absolute z-50 bg-gray-800 bg-opacity-90 w-full h-full">
+      {addMsg ? (
+        <h1 className="absolute bg-green-600 p-3 pr-8 rounded-2xl top-2 right-2">
+          {addMsg}
           <button
-            className="absolute top-0 right-0 p-5"
-            onClick={() => setSearchWindow(false)}
+            onClick={() => setAddMsg("")}
+            className="absolute top-1 right-1 text-white"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
-              stroke-width="1.5"
-              stroke="currentColor"
-              className="size-8 text-white bg-red-600 rounded-full hover:bg-red-700 transition-all"
+              strokeWidth={1.5}
+              stroke="red"
+              className="size-7"
             >
               <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M6 18 18 6M6 6l12 12"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
               />
             </svg>
           </button>
-          <div className="p-14 flex justify-center">
-            <div className="relative w-[50%] left-auto right-auto">
-              <Search onSearchResult={handleSearchResult}></Search>
-              <div
-                className="z-20 absolute bg-gray-600 p-3 rounded-md w-full"
-                onClick={() => setSearchWindow(false)}
-              >
-                <List artists={artists} onClickArtist={onClickArtist}></List>
-              </div>
-            </div>
-          </div>
-        </div>
+        </h1>
       ) : (
         <></>
       )}
       <div className="flex max-w-[90%] w-full">
         <div>
           <Sidebar
-            username={user?.username ?? ""}
+            username={user?.username || ""}
             currentPath={usePathname() ?? ""}
           />
         </div>
-        <button
-          className="absolute top-0 right-0 p-5"
-          onClick={() => setSearchWindow(true)}
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth="1.5"
-            stroke="currentColor"
-            className="size-8 transition-all hover:scale-150 hover:transition-all hover:filter"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
-            />
-          </svg>
-        </button>
-        {loading ? (
-          loadingElement
+        {!loading ? (
+          <div className="p-4 grid grid-cols-3 gap-5 w-full">
+            <section className="flex flex-col gap-5">
+              <div className="flex flex-row justify-center gap-5">
+                <FollowerCount
+                  className="bg-blue-700"
+                  count={artists.length}
+                ></FollowerCount>
+                <GenreCount
+                  className="bg-green-700"
+                  count={genreSum}
+                ></GenreCount>
+              </div>
+              <div className="bg-orange-400 p-4 rounded-3xl">
+                <h1>Top Genres</h1>
+                <hr className="border-t-2 border-orange-200 my-2" />
+                <SimpleCharts genres={genreCount}></SimpleCharts>
+              </div>
+            </section>
+            <section className="">
+              <div className="flex flex-col bg-purple-700 p-4 rounded-3xl">
+                <h1>Following</h1>
+                <hr className="border-t-2 border-purple-500 my-2" />
+                <SearchBar
+                  onSearchResult={searchFollowedArtists}
+                  spotify={false}
+                ></SearchBar>
+                <div className="mt-3">
+                  <List
+                    className="hover:bg-purple-500 rounded-lg"
+                    onClickArtist={onClickArtist}
+                    artists={artists}
+                  ></List>
+                </div>
+              </div>
+            </section>
+            <section className="">
+              <div className="bg-red-500 p-4 rounded-3xl">
+                <h1>Add Artist</h1>
+                <hr className="border-t-2 border-red-300 my-2" />
+                <SearchBar
+                  onSearchResult={onSearchResult}
+                  spotify={true}
+                ></SearchBar>
+                <div className="mt-3">
+                  <ListAdd
+                    artists={searchResult}
+                    className="hover:bg-red-300 rounded-lg"
+                    onClickArtist={addArtist}
+                    artistSet={allUserArtists}
+                  ></ListAdd>
+                </div>
+              </div>
+            </section>
+          </div>
         ) : (
-          <>
-            <div className="flex flex-col w-full p-4 gap-5">
-              <Graph data={data} minimum={minimum} maximum={maximum}></Graph>
-            </div>
-            <VerticalText text={currentArtist} />
-          </>
+          loadingElement
         )}
       </div>
     </div>
