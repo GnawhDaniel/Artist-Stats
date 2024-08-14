@@ -2,7 +2,7 @@ export async function getSpotifySearch(query: string) {
   const response = await fetch(`/api/search?query=${query}`, {
     method: "GET",
     headers: { "Content-Type": "application/json" },
-  })
+  });
   if (!response.ok) {
     throw new Error("Failed to fetch artist from Spotify");
   }
@@ -56,7 +56,7 @@ export async function getUser() {
   if (!response.ok) {
     throw new Error("Failed to fetch user info.");
   }
-  const res = await response.json()
+  const res = await response.json();
   return res;
 }
 
@@ -69,6 +69,30 @@ export async function getGenreCount() {
   if (!response.ok) {
     throw new Error("Failed to fetch user's genres.");
   }
-  const res = await response.json()
+  const res = await response.json();
+  return res;
+}
+
+export async function addArtistToUser(
+  artist_id: string,
+  artist_name: string,
+  image_url: string = "",
+  followers: number = -1,
+) {
+  const response = await fetch("/api/add-artists", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify({
+      artist_id: artist_id,
+      artist_name: artist_name,
+      image_url: image_url,
+      followers: followers,
+    }),
+  });
+  if (!response.ok) {
+    throw new Error("Failed to add artist.");
+  }
+  const res = await response.json();
   return res;
 }

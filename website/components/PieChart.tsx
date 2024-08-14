@@ -1,7 +1,5 @@
 import * as React from "react";
 import Stack from "@mui/material/Stack";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
 import { PieChart } from "@mui/x-charts/PieChart";
 
 // const data = [
@@ -20,24 +18,32 @@ export default function PieChartWithPaddingAngle({ genres }: Prop) {
   const series = [
     {
       data: genres,
+      innerRadius: 50,
+      outerRadius: 100,
+      paddingAngle: 5,
+      cornerRadius: 5,
+      startAngle: 0,
+      endAngle: 360,
+      cx: 130,
+      cy: 120,
     },
   ];
 
   return (
-    <Stack>
-      <PieChart
-        series={series}
-        slotProps={{
-          legend: {
-            hidden: isHidden,
-            labelStyle: {
-              fill: "white"
-            }
-          },
-        }}
-        width={550}
-        height={250}
-      />
-    </Stack>
+    <PieChart
+      series={series}
+      slotProps={{
+        legend: {
+          // direction: 'row',
+          // position: {vertical: 'top', horizontal: "middle"},
+          hidden: isHidden,
+          labelStyle: {
+            fill: "white"
+          }
+        },
+      }}
+      width={450}
+      height={250}
+    />
   );
 }
