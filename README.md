@@ -8,12 +8,19 @@ I wanted a way where I could keep track of a music artist's popularity to see ho
 
 So this is a project that can serve as a tool for me to not only keep track of the growth of the artists I follow, but also a place where I can aggregate my personal music data into one place.
 
-## Progress
-- [x] ETL artist data from Spotify API
-- [x] Automating ETL tasks
-- [ ] Login / Registering + Protecting Pages
-- [x] Connecting DB to Auth
-- [ ] Building User DB
-- [ ] Visualizing growth trends
-- [ ] Asking permission for user's Spotify data for aggregation purposes
-- [ ] Incorporating Instagram, X, and other social media follower counts 
+## Progress Pictures
+
+### Hero Page
+![Hero Page](assets/mainpage.png)
+
+### Login Page
+![Main Page](assets/login.png)
+
+### Dashboard Page
+![Main Page](assets/dashboard.png)
+
+### Graph Page
+![Graph Page](assets/graph.png)
+
+### FAQ Page
+![FAQ Page](assets/faq.png)
