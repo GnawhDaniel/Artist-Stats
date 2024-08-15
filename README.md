@@ -1,5 +1,5 @@
 # musipster
-Welcome to Artist Stats (Working Name)! This is a WIP repository for my personal project that intersect two of my passions: music and software developing. 
+Welcome to musipster (look at the hero page section below for the definition)! This is a WIP repository for my personal project that intersect two of my passions: music and software developing. 
 
 ## Vision
 Finding new artists, songs, and genres is a hobby of mine. This hobby often lead me to discover many underground, up-and-coming artists.
