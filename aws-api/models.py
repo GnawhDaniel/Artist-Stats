@@ -3,6 +3,7 @@ from uuid import uuid4
 from sqlalchemy import Column, DateTime, ForeignKey, String, Text, Date, Integer
 from database import Base
 from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.orm import relationship
 
 # Google Oauth
 class TempState(Base):
@@ -31,11 +32,26 @@ class Token(Base):
     __table_args__ = {'schema': 'google_auth'}
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    user_id = Column(String(255), ForeignKey('google_auth.users.google_id', ondelete='CASCADE'), nullable=False)
+    google_id = Column(String(255), ForeignKey('google_auth.users.google_id', ondelete='CASCADE'), nullable=False)
     access_token = Column(Text)
     refresh_token = Column(Text)
     token_expires_at = Column(DateTime)
     created_at = Column(DateTime)  
+    
+    
+class Session(Base):
+    __tablename__ = 'sessions'
+    __table_args__ = {'schema': 'google_auth'}
+    
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    session_id = Column(String(255), unique=True, nullable=False)
+    google_id = Column(String(255), ForeignKey('google_auth.users.google_id', ondelete='CASCADE'))
+    access_token = Column(Text, nullable=False)
+    refresh_token = Column(Text)
+    token_expires_at = Column(DateTime(timezone=True))
+    session_expires_at = Column(DateTime(timezone=True), nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default='CURRENT_TIMESTAMP')
+    last_accessed_at = Column(DateTime(timezone=True), server_default='CURRENT_TIMESTAMP')
 
 
 # OAuth old

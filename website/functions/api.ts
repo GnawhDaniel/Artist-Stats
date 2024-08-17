@@ -98,3 +98,13 @@ export async function addArtistToUser(
   const res = await response.json();
   return res;
 }
+
+export async function googleAuth()
+{
+  const response = await fetch('/api/google-auth', {
+    method: 'GET',
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+  });
+  return await response.json()
+}

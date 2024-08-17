@@ -9,7 +9,7 @@ app = FastAPI()
 origins = [
     "http://localhost",
     "http://localhost:3000",
-    "http://localhost:3000/dashboard",
+    "https://localhost:3000"
 ]
 
 app.add_middleware(
@@ -22,6 +22,6 @@ app.add_middleware(
 
 models.Base.metadata.create_all(bind=engine)
 
-# app.include_router(auth.router)
+app.include_router(auth.router)
 app.include_router(following.router)
 app.include_router(auth_google.router)

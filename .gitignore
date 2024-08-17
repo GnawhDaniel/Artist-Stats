@@ -22,3 +22,5 @@ aws-api/routers/auth.py
 aws-api/.git
 
 .vscode
+
+google-client-secret.json
