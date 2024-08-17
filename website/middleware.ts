@@ -1,12 +1,12 @@
 import { NextResponse } from "next/server";
 import { NextRequest } from "next/server";
-import { isAuthenticated } from "./functions/auth";
+import { isAuthenticatedGoogle } from "./functions/auth";
 
 export async function middleware(request: NextRequest) {
   console.log("MIDDLEWARE LOG:");
-  let cookie = request.cookies.get("session_id");
-
-  const authenticated = await isAuthenticated(cookie?.value);
+  let session_id = request.cookies.get("session_id");
+  const authenticated = await isAuthenticatedGoogle(session_id?.value);
+  // console.log(session_id?.value, authenticated)
 
   // let authenticated =true;
   if (!authenticated && !request.url.endsWith("/login")) {

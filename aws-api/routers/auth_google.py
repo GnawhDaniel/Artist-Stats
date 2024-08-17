@@ -2,17 +2,16 @@
 from fastapi.responses import RedirectResponse
 from fastapi import APIRouter, Cookie, HTTPException, Request, Response
 from fastapi.responses import RedirectResponse
+from pydantic import BaseModel
 from starlette import status
 
 # Auth
 from google.auth import jwt
-import google.oauth2.credentials
 import google_auth_oauthlib.flow
-import googleapiclient.discovery
 
 # Custom Libraries
-from utils import db_dependency
-from models import TempState, GoogleUsers, Token, Session
+from utils import db_dependency, is_session_valid
+from models import TempState, GoogleUsers, Session
 
 # Other Libraries
 import re
@@ -20,7 +19,6 @@ from typing import Annotated
 import urllib.parse
 import requests
 import datetime
-import hashlib
 import secrets
 import os
 import pytz
@@ -46,7 +44,8 @@ flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
 flow.redirect_uri = REDIRECT_URI
 
 
-# https://c046-2607-fb90-d58c-582a-58b3-2a31-9068-65dd.ngrok-free.app/google-auth/authenticate
+class SessionCheck(BaseModel):
+    session_id: str
 
 
 def create_unique_username(db: db_dependency, base_username: str) -> str:
@@ -78,22 +77,51 @@ def create_session(google_id, access_token, refresh_token, expires_in, db: db_de
 
     return session_id
 
-@router.get("/authenticated")
-def isAuthenticated(db: db_dependency, session_id: Annotated[str | None, Cookie()] = None):
-    session_db = db.query(Session).filter(Session.session_id == session_id).first()
-    
+
+@router.get("/me")
+def me(db: db_dependency, session_id: Annotated[str | None, Cookie()] = None):
+    """
+    Checks if session is valid. Invalid if session_id is not found in DB
+    or session is expired
+    """
+    session = db.query(Session).filter(
+        Session.session_id == session_id).first()
+
+    if not is_session_valid(session, db):
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
+
+    google_id = session.google_id
+    user_info: GoogleUsers = db.query(GoogleUsers).filter(
+        GoogleUsers.google_id == google_id).first()
+
+    if not user_info:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
+
+    return {
+        "firstname": user_info.first_name,
+        "lastname": user_info.last_name,
+        "username": user_info.user_name,
+        "email": user_info.email,
+        "account_creation_date": user_info.created_at
+    }
+
+
+@router.post("/authenticated")
+def isAuthenticated(db: db_dependency, session_check: SessionCheck):
+    session_db = db.query(Session).filter(
+        Session.session_id == session_check.session_id).first()
+
     # Check if session is valid
-    if not session_db or session_db.session_expires_at < datetime.datetime.now(tz=datetime.UTC):
+    if not is_session_valid(session_db, db):
         return {"authenticated": False}
-    
+
     return {"authenticated": True}
 
 
 @router.get("/authenticate")
 def authenticate(db: db_dependency, session_id: Annotated[str | None, Cookie()] = None):
     # Check if session exists
-    print(session_id)
-    
+
     if not session_id:
         authorization_url, state = flow.authorization_url(
             # Recommended, enable offline access so that you can refresh an access token without
@@ -179,7 +207,7 @@ def callback(db: db_dependency, request: Request):
         db.commit()
 
     # Data to pass
-    access_token =  token_response["access_token"],
+    access_token = token_response["access_token"],
     expire_date = datetime.datetime.fromtimestamp(
         jwt_payload["exp"], tz=pytz.UTC)
     expires_str = expire_date.strftime("%a, %d %b %Y %H:%M:%S GMT")

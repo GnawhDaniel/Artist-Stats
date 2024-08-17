@@ -122,7 +122,7 @@ export default function MyArtists() {
       followers,
       genres
     );
-    console.log(res);
+    // console.log(res);
     if ("code" in res && res.code == 200) {
       setAddMsg(`${artist_name} was succesfully added.`);
     }

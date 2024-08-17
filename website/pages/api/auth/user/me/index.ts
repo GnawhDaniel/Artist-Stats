@@ -1,25 +1,18 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 
-function getCookieValue(cookie: string, cookieName: string): string | null {
-    const cookies = cookie.split('; ').map(c => c.split('='));
-    const cookieObj = Object.fromEntries(cookies);
-    return cookieObj[cookieName] || null;
-  }
-  
+
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
   try {
-    const cookieString = req.headers.cookie ?? "";
-    const sessionID = getCookieValue(cookieString, "session_id");
-
-    const response = await fetch(process.env.API_ENDPOINT + "/auth/users/me", {
+    console.log("Cookie", req.headers.cookie)
+    const response = await fetch(process.env.API_ENDPOINT + "/google-auth/me", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${sessionID}`,
+          Cookie: req.headers.cookie || "",
         },
         credentials: "include"
       });

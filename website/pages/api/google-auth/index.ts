@@ -6,7 +6,7 @@ export default async function handler(
 ) {
   const apiURL = process.env.API_ENDPOINT;
   const response = await fetch(
-    `https://5100-2607-fb90-d596-9474-a5eb-7baf-187d-e272.ngrok-free.app/google-auth/authenticate`,
+    `${process.env.API_ENDPOINT}/google-auth/authenticate`,
     {
       method: "GET",
       headers: {

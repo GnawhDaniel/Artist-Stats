@@ -115,5 +115,14 @@ class MasterArtistView(Base):
     date = Column(DateTime(timezone=True))
     followers = Column(Integer)
     genres = Column(String)
+    
+    
+class GoogleUserFollowing(Base):
+    __tablename__ = 'google_user_following'
+    __table_args__ = {'schema': 'public'}
+
+    id = Column(String, primary_key=True)
+    artist_id = Column(String)
+    followed_date = Column(DateTime)
 
 
