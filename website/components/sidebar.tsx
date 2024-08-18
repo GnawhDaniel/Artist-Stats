@@ -1,3 +1,5 @@
+import { navigate } from "@/functions/actions";
+
 export default function Sidebar({
   username,
   currentPath,
@@ -10,6 +12,19 @@ export default function Sidebar({
     `inline-block px-2 py-1 rounded transition-colors duration-200 group-hover:bg-gray-700 ${
       isActive(path) ? "font-bold italic" : " font-light "
     }`;
+
+  const logOut = async () => {
+    const response = await fetch('/api/deletecookie', {
+      method: 'GET',
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+    });
+
+    if (response.status == 200) {
+      navigate("/")
+    }
+  }
+
   return (
     <div className="flex">
       <header className="p-4 flex flex-col min-h-screen justify-between w-52">
@@ -39,7 +54,7 @@ export default function Sidebar({
           </ul>
         </div>
         <div className="logout pl-2">
-          <button>
+          <button onClick={logOut}>
             <h1>@{username}</h1>
           </button>
         </div>
