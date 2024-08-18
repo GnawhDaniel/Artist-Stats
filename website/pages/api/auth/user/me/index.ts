@@ -18,7 +18,6 @@ export default async function handler(
       });
 
     const data = await response.json();
-    console.log("Res", data);
     res.status(200).json(data);
   } catch (error) {
     res.status(500).json({ error: "Failed to fetch user info" });

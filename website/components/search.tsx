@@ -46,6 +46,7 @@ export default function Search({onSearchResult}: {onSearchResult: (data: any) =>
           placeholder="Search Artists"
           onChange={(e) => setQuery(e.target.value)}
           autoComplete="off"
+          spellCheck='false'
           required
         />
         <button

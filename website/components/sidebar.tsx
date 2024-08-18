@@ -37,7 +37,7 @@ export default function Sidebar({
             <a href="/dashboard" className="group">
               <li className={linkClass("/dashboard")}>Dashboard</li>
             </a>
-            <a href="graph" className="group">
+            <a href="/graph" className="group">
               <li className={linkClass("/graph")}>Graph</li>
             </a>
             {/* <a className="group cursor-pointer">
@@ -45,10 +45,10 @@ export default function Sidebar({
             </a>
             <a className="group cursor-pointer">
               <li className={linkClass("/playlists")}>Playlists (WIP)</li>
-            </a>
-            <a className="group cursor-pointer">
-              <li className={linkClass("/settings")}>Settings (WIP)</li>
             </a> */}
+            <a href="/settings" className="group cursor-pointer">
+              <li className={linkClass("/settings")}>Settings</li>
+            </a>
             <a href="/faq" className="group">
               <li className={linkClass("/faq")}>FAQ</li>
             </a>

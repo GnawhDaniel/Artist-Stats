@@ -179,7 +179,7 @@ export default function MyArtists() {
               <div className="flex flex-row justify-center gap-5">
                 <FollowerCount
                   className="bg-blue-700"
-                  count={artists.length}
+                  count={allUserArtists.size}
                 ></FollowerCount>
                 <GenreCount
                   className="bg-green-700"

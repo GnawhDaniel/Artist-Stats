@@ -31,13 +31,14 @@ export default function SearchBarSpotify({onSearchResult, spotify}: Prop) {
   const handleSearchResult = async (e: any) => {
     e.preventDefault();
 
-    let data;
-    if (spotify) {
+    let data = [];
+    if (spotify && query) {
         data = await getSpotifySearch(query);
         data = formatData(data);
         // console.log(data);
     }
-    else if (!spotify) {
+
+    if (!spotify) {
         data = await searchArtists(query);
     }
 
@@ -77,7 +78,7 @@ export default function SearchBarSpotify({onSearchResult, spotify}: Prop) {
           placeholder="Search Artists"
           onChange={(e) => setQuery(e.target.value)}
           autoComplete="off"
-          required
+          spellCheck="false"
         />
         <button
           type="submit"

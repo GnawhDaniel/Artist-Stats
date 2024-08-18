@@ -2,7 +2,7 @@
 from fastapi.responses import RedirectResponse
 from fastapi import APIRouter, Cookie, HTTPException, Request, Response
 from fastapi.responses import RedirectResponse
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from starlette import status
 
 # Auth
@@ -85,8 +85,9 @@ def revokeSession(db: db_dependency, session_id: Annotated[str | None, Cookie()]
         db.delete(session)
         db.commit()
         return {"msg": "session succesfully deleted"}
-        
-    raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="session was not deleted")
+
+    raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
+                        detail="session was not deleted")
 
 
 @router.get("/me")
@@ -97,7 +98,7 @@ def me(db: db_dependency, session_id: Annotated[str | None, Cookie()] = None):
     """
     session = db.query(Session).filter(
         Session.session_id == session_id).first()
-    
+
     if not is_session_valid(session, db):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
 
@@ -133,7 +134,7 @@ def authenticate(db: db_dependency, session_id: Annotated[str | None, Cookie()] 
     # Check if session exists
     session = get_session(session_id, db)
     if not is_session_valid(session, db):
-        
+
         authorization_url, state = flow.authorization_url(
             # Recommended, enable offline access so that you can refresh an access token without
             # re-prompting the user for permission. Recommended for web server apps.
@@ -238,3 +239,31 @@ def callback(db: db_dependency, request: Request):
         url=f"http://localhost:3000/api/set-session-cookie?{encoded_data}")
 
     return response
+
+
+# Changing username components
+class ChangeUserNameRequest(BaseModel):
+    new_username: str = Field(max_length=60, min_length=3, pattern=r'^[a-zA-Z0-9]+$')
+
+@router.post("/change-username", status_code=status.HTTP_200_OK)
+def changeUsername(db: db_dependency, request: ChangeUserNameRequest, session_id: Annotated[str | None, Cookie()] = None):
+    session = get_session(session_id, db)
+    if is_session_valid(session, db):
+        account = db.query(GoogleUsers).filter(
+            GoogleUsers.google_id == session.google_id).first()
+        
+        is_unique = db.query(GoogleUsers).filter(GoogleUsers.user_name == request.new_username).all()
+        if len(is_unique) > 0:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST, detail="User already exists")
+        
+        if account:
+            account.user_name = request.new_username
+            db.commit()
+            return {"message": "Username updated succesfully"}
+        else:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+
+    raise HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED, status="Invalid session")

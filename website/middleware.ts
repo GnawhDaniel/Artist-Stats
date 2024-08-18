@@ -12,7 +12,7 @@ export async function middleware(request: NextRequest) {
   let session_id = request.cookies.get("session_id");
 
   const authenticated = await isAuthenticatedGoogle(session_id?.value);
-  console.log(authenticated)
+  // console.log(authenticated)
   // let authenticated =true;
   if (!authenticated && !request.url.endsWith("/login")) {
     console.log("return to login");
@@ -25,5 +25,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/login:path*", "/graph/:path*", "/help"],
+  matcher: ["/dashboard/:path*", "/login:path*", "/graph/:path*", "/help", "/faq", "/settings"],
 };

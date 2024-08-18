@@ -17,7 +17,6 @@ export async function isAuthenticatedGoogle(session_id: string | undefined) {
 
   if (response.status == 200) {
     const res = await response.json();
-    console.log(res)
     return res["authenticated"];
   }
   return false;
