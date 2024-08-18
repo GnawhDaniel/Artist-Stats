@@ -8,13 +8,13 @@ export default function List({ artists, onClickArtist, className }: ListProps) {
   if (artists.length === 0) {
     return <></>;
   }
+  console.log("list", artists)
   return (
     <div className="max-h-80 lg:max-h-searchPopUp overflow-y-auto no-scrollbar">
       <ul>
         {artists.map((artist, index) => (
-          <div className="">
+          <li key={index}>
             <button
-              key={index}
               className={`flex items-center gap-3 w-full p-2 ${
                 className ? className : "hover:bg-gray-700"
               }`}
@@ -31,9 +31,9 @@ export default function List({ artists, onClickArtist, className }: ListProps) {
               ) : (
                 <></>
               )}{" "}
-              <li>{artist["artist_name"]}</li>
+              <p>{artist["artist_name"]}</p>
             </button>
-          </div>
+          </li>
         ))}
       </ul>
     </div>

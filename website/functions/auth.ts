@@ -4,7 +4,6 @@ export async function isAuthenticatedGoogle(session_id: string | undefined) {
   if (session_id === undefined) {
     return false;
   }
-
   const response = await fetch(
     process.env.API_ENDPOINT + "/google-auth/authenticated",
     {
@@ -18,6 +17,7 @@ export async function isAuthenticatedGoogle(session_id: string | undefined) {
 
   if (response.status == 200) {
     const res = await response.json();
+    console.log(res)
     return res["authenticated"];
   }
   return false;

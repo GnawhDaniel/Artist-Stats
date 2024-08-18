@@ -36,7 +36,7 @@ export default function MyArtists() {
 
   // Search Result from Following Component
   const [searchResult, setSearchResult] = useState([]);
-  const [artists, setArtists] = useState([]);
+  const [artists, setArtists] = useState<any[]>([]);
 
   // Loading State
   const [loading, setLoading] = useState(true);
@@ -132,6 +132,10 @@ export default function MyArtists() {
     updatedUserArtists.add(artist_id);
 
     setAllUserArtists(updatedUserArtists);
+    setArtists((artists) => [
+      { artist_id: artist_id, artist_name: artist_name },
+      ...artists,
+    ]);
   };
 
   return (

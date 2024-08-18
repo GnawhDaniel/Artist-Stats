@@ -6,7 +6,7 @@ export default function handler(
   res: NextApiResponse
 ) {
   const { session_id, expires_at } = req.query;
-  console.log("Handler", session_id, expires_at);
+  
   if (typeof session_id === "string" && typeof expires_at === "string") {
     // Set the cookie
     res.setHeader(
@@ -16,7 +16,7 @@ export default function handler(
       ).toUTCString()}; Path=/`
     );
     
-    res.redirect(307, "/dashboard?auth=true");
+    res.redirect(307, "/dashboard");
 
     // res.redirect(307, "/dashboard");
   } else {

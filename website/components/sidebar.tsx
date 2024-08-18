@@ -7,6 +7,7 @@ export default function Sidebar({
   username: string;
   currentPath: string;
 }) {
+
   const isActive = (path: string) => currentPath === path;
   const linkClass = (path: string) =>
     `inline-block px-2 py-1 rounded transition-colors duration-200 group-hover:bg-gray-700 ${
@@ -14,16 +15,16 @@ export default function Sidebar({
     }`;
 
   const logOut = async () => {
-    const response = await fetch('/api/deletecookie', {
-      method: 'GET',
+    const response = await fetch("/api/deletecookie", {
+      method: "GET",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
     });
 
     if (response.status == 200) {
-      navigate("/")
+      navigate("/");
     }
-  }
+  };
 
   return (
     <div className="flex">
@@ -39,7 +40,7 @@ export default function Sidebar({
             <a href="graph" className="group">
               <li className={linkClass("/graph")}>Graph</li>
             </a>
-            <a className="group cursor-pointer">
+            {/* <a className="group cursor-pointer">
               <li className={linkClass("/discover")}>Discover (WIP)</li>
             </a>
             <a className="group cursor-pointer">
@@ -47,14 +48,17 @@ export default function Sidebar({
             </a>
             <a className="group cursor-pointer">
               <li className={linkClass("/settings")}>Settings (WIP)</li>
-            </a>
+            </a> */}
             <a href="/faq" className="group">
               <li className={linkClass("/faq")}>FAQ</li>
             </a>
           </ul>
         </div>
-        <div className="logout pl-2">
-          <button onClick={logOut}>
+        <div className="flex flex-col logout pl-2 group">
+          <button onClick={logOut} className="bg-red-400 py-2 rounded-2xl hidden group-hover:block">
+            Log Out
+          </button>
+          <button className="">
             <h1>@{username}</h1>
           </button>
         </div>

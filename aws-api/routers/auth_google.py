@@ -10,7 +10,7 @@ from google.auth import jwt
 import google_auth_oauthlib.flow
 
 # Custom Libraries
-from utils import db_dependency, is_session_valid
+from utils import db_dependency, is_session_valid, get_session
 from models import TempState, GoogleUsers, Session
 
 # Other Libraries
@@ -78,6 +78,17 @@ def create_session(google_id, access_token, refresh_token, expires_in, db: db_de
     return session_id
 
 
+@router.post("/revoke-session", status_code=status.HTTP_200_OK)
+def revokeSession(db: db_dependency, session_id: Annotated[str | None, Cookie()] = None):
+    session = get_session(session_id, db)
+    if is_session_valid(session, db):
+        db.delete(session)
+        db.commit()
+        return {"msg": "session succesfully deleted"}
+        
+    raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="session was not deleted")
+
+
 @router.get("/me")
 def me(db: db_dependency, session_id: Annotated[str | None, Cookie()] = None):
     """
@@ -86,7 +97,7 @@ def me(db: db_dependency, session_id: Annotated[str | None, Cookie()] = None):
     """
     session = db.query(Session).filter(
         Session.session_id == session_id).first()
-
+    
     if not is_session_valid(session, db):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
 
@@ -110,7 +121,6 @@ def me(db: db_dependency, session_id: Annotated[str | None, Cookie()] = None):
 def isAuthenticated(db: db_dependency, session_check: SessionCheck):
     session_db = db.query(Session).filter(
         Session.session_id == session_check.session_id).first()
-
     # Check if session is valid
     if not is_session_valid(session_db, db):
         return {"authenticated": False}
@@ -121,8 +131,9 @@ def isAuthenticated(db: db_dependency, session_check: SessionCheck):
 @router.get("/authenticate")
 def authenticate(db: db_dependency, session_id: Annotated[str | None, Cookie()] = None):
     # Check if session exists
-
-    if not session_id:
+    session = get_session(session_id, db)
+    if not is_session_valid(session, db):
+        
         authorization_url, state = flow.authorization_url(
             # Recommended, enable offline access so that you can refresh an access token without
             # re-prompting the user for permission. Recommended for web server apps.
@@ -224,6 +235,6 @@ def callback(db: db_dependency, request: Request):
     encoded_data = urllib.parse.urlencode(redirect_data)
 
     response = RedirectResponse(
-        url=f"https://localhost:3000/api/set-session-cookie?{encoded_data}")
+        url=f"http://localhost:3000/api/set-session-cookie?{encoded_data}")
 
     return response

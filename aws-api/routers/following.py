@@ -24,24 +24,28 @@ class addArtistReq(BaseModel):
 
 @router.post("/add-artist", status_code=status.HTTP_200_OK)
 async def addArtist(db: db_dependency, artist: addArtistReq, session_id: Annotated[str | None, Cookie()] = None):
+    print(artist)
     session = get_session(session_id, db)
     # No token provided
-    if not is_session_valid(session, db):  # Must check this because of DB schema design
+    # Must check this because of DB schema design
+    if not is_session_valid(session, db):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED, detail="Could not find user session or session is invalid")
 
     # Check if artist already exists in user's following list
     existing_artist = db.query(GoogleUserFollowing.artist_id).filter(
-        GoogleUserFollowing.artist_id == artist.artist_id).first()
+        GoogleUserFollowing.artist_id == artist.artist_id, GoogleUserFollowing.id == session.google_id).first()
     if existing_artist:
         return {'code': '200', 'message': "artist already exists in user's following list"}
-    
+
     # Add artist to tables
     else:
         try:
             # Check if artist is in names table
-            artist_in_db = db.query(Artists).filter(Artists.artist_id==artist.artist_id).first() 
+            artist_in_db = db.query(Artists).filter(
+                Artists.artist_id == artist.artist_id).first()
             if not artist_in_db:
+                print("add to db")
                 # Add artist to names table
                 new_artist = Artists(
                     artist_id=artist.artist_id,
@@ -58,27 +62,29 @@ async def addArtist(db: db_dependency, artist: addArtistReq, session_id: Annotat
                 )
                 db.add(artist_stats)
                 db.commit()
-                
+
+                # Add artist genres to genres table
+                for genre in artist.genres:
+                    genre_to_add = ArtistGenres(
+                        artist_id=artist.artist_id,
+                        genre=genre
+                    )
+                    db.add(genre_to_add)
+                db.commit()
+
             # Add artist to user profile
             artist_to_user = GoogleUserFollowing(
-                id = session.google_id,
-                artist_id = artist.artist_id,
+                id=session.google_id,
+                artist_id=artist.artist_id,
                 followed_date=datetime.datetime.now(tz=datetime.UTC)
             )
+            print(artist_to_user)
             db.add(artist_to_user)
-            db.commit()
-            
-            # Add artist genres to genres table
-            for genre in artist.genres:
-                genre_to_add = ArtistGenres(
-                    artist_id = artist.artist_id,
-                    genre = genre
-                )
-                db.add(genre_to_add)
             db.commit()
 
             return {'code': '200', 'message': f"successfully added {artist.artist_name} with artist id {artist.artist_id}"}
-        except Exception:
+        except Exception as e:
+            print("???", e)
             db.rollback()
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to add artist"
@@ -88,14 +94,16 @@ async def addArtist(db: db_dependency, artist: addArtistReq, session_id: Annotat
 @router.get("/getall", status_code=status.HTTP_200_OK)
 async def fetch_artists_query(db: db_dependency, query: str | None = None, session_id: Annotated[str | None, Cookie()] = None):
     session = get_session(session_id, db)
-    
+
     # No token provided
-    if not is_session_valid(session, db):  # Must check this because of DB schema design
+    # Must check this because of DB schema design
+    if not is_session_valid(session, db):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED, detail="Could not find user session")
 
-    user = db.query(GoogleUsers).filter(GoogleUsers.google_id==session.google_id).first() 
-    
+    user = db.query(GoogleUsers).filter(
+        GoogleUsers.google_id == session.google_id).first()
+
     if not query:
         # query = text("SELECT * FROM public.get_user_following_google(:p_id)")
         # artists = db.execute(query, {"p_id": session.google_id}).all()
@@ -104,7 +112,8 @@ async def fetch_artists_query(db: db_dependency, query: str | None = None, sessi
             join(Artists, GoogleUserFollowing.artist_id == Artists.artist_id).\
             filter(GoogleUserFollowing.id == session.google_id).\
             all()
-        artists = [{'artist_id': artist_id, 'artist_name': artist_name} for artist_id, artist_name in artists]
+        artists = [{'artist_id': artist_id, 'artist_name': artist_name}
+                   for artist_id, artist_name in artists]
     else:
         artists = db.query(Artists).filter(
             Artists.artist_name.ilike(f'%{query}%')).all()
@@ -113,9 +122,9 @@ async def fetch_artists_query(db: db_dependency, query: str | None = None, sessi
 
 @router.get("/getgenrecount")
 async def test(db: db_dependency, session_id: Annotated[str | None, Cookie()] = None):
-    session: Session = get_session(session_id, db)    
-    
-    if not is_session_valid(session, db):  
+    session: Session = get_session(session_id, db)
+
+    if not is_session_valid(session, db):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED, detail="Could not find user session")
 
@@ -132,10 +141,10 @@ async def fetch_artist_stats(
 ):
     session = get_session(session_id, db)
     # No token provided
-    if not is_session_valid(session, db):  # Must check this because of DB schema design
+    # Must check this because of DB schema design
+    if not is_session_valid(session, db):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED, detail="Could not find user session or session is invalid")
-    
 
     artist = db.query(ArtistStats).filter(
         ArtistStats.artist_id == id).order_by(ArtistStats.date).all()

@@ -7,7 +7,6 @@ import { getSpotifySearch, searchArtists } from "@/functions/api";
 function formatData(data: any) {
     // Get ID, Name, Follower, and Image
     const obj = data?.artists?.items;
-    console.log(obj)
     let artistList = [];
     for (let i = 0; i < obj.length; i++) {
         artistList.push({

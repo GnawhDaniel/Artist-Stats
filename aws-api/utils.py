@@ -45,7 +45,7 @@ def is_session_valid(session: models.Session, db: db_dependency):
         if session:  # if exists but expired -> delete
             db.delete(session)
             db.commit()
-            return False
+        return False
 
     return True
 
