@@ -15,6 +15,8 @@ export default function Help() {
   const [msg, setMsg] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
 
+  const [confirmBox, setConfirmBox] = useState(false);
+
   // Call get all artists on page load
   useEffect(() => {
     async function init() {
@@ -48,17 +50,32 @@ export default function Help() {
         body: JSON.stringify({ new_username: username }),
       });
       if (response.ok) {
-        setErrorMsg("")
+        setErrorMsg("");
         setMsg(`Changed username from ${user?.username} to ${username}`);
       } else {
-        console.log(response)
+        console.log(response);
         let res = await response.json();
-        console.log(res)
+        console.log(res);
         setMsg("");
         setErrorMsg(res.message);
       }
     } catch {}
   };
+
+  const deleteAccount = async () => {
+    try {
+        const response = await fetch("/api/google-auth/profile/delete", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+        });
+        if (response.ok) {
+            window.location.reload();
+        } 
+      } catch {}
+  }
 
   return (
     <div className="flex h-screen flex-col items-center">
@@ -90,7 +107,7 @@ export default function Help() {
           <div className="p-4 w-full h-full max-h-screen">
             <h1 className="font-extrabold text-5xl italic">Settings</h1>
             <hr className="border-t-2 border-white my-2" />
-            <div className="flex">
+            <div className="flex justify-evenly">
               <div className="bg-orange-400 p-4 rounded-2xl">
                 <h1>Change Username</h1>
                 <hr className="border-t-2 border-orange-200 my-2" />
@@ -111,6 +128,24 @@ export default function Help() {
                     Submit
                   </button>
                 </form>
+              </div>
+
+              <div className="bg-red-400 p-4 rounded-2xl h-full">
+                <h1>Delete Account</h1>
+                <hr className="border-t-2 border-orange-200 my-2" />
+                {confirmBox ? (
+                  <div className="flex flex-col gap-2">
+                    <button onClick={()=>deleteAccount()} className="bg-red-500 rounded-xl p-2">Delete</button>
+                    <button onClick={()=>setConfirmBox(false)} className="bg-green-500 rounded-xl p-2">Do Not Delete</button>
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => setConfirmBox(true)}
+                    className="bg-red-500 p-3 rounded-xl "
+                  >
+                    Delete My Account
+                  </button>
+                )}
               </div>
             </div>
           </div>
