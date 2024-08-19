@@ -1,61 +1,96 @@
-function DefaultSidebar({ username, currentPath }: { username: string; currentPath: string }) {
-  const isActive = (path: string) => currentPath === path;
+"use client";
+import { navigate } from "@/functions/actions";
+import { useEffect, useRef, useState } from "react";
 
+export default function Sidebar({
+  username,
+  currentPath,
+}: {
+  username: string;
+  currentPath: string;
+}) {
+  const [showLogOutBox, setShowLogOut] = useState(false);
+  const logoutBoxRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        logoutBoxRef.current &&
+        !logoutBoxRef.current.contains(event.target as Node)
+      ) {
+        setShowLogOut(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  const isActive = (path: string) => currentPath === path;
   const linkClass = (path: string) =>
-    `inline-block px-2 py-1 rounded transition-colors duration-200 hover:bg-gray-700 ${
-      isActive(path) ? 'font-bold italic' : ' font-light '
+    `inline-block px-2 py-1 rounded transition-colors duration-200 group-hover:bg-gray-700 ${
+      isActive(path) ? "font-bold italic" : " font-light "
     }`;
 
+    const logOut = async () => {
+      const response = await fetch('/api/deletecookie', {
+        method: 'GET',
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+      });
+  
+      if (response.status == 200) {
+        navigate("/")
+      }
+    }
   return (
-    <>
-      <header className="p-4 flex flex-col min-h-screen justify-between w-52">
-        <div>
-          <h1 className="pl-2 text-4xl font-bold">musipster</h1>
-          <ul className="mt-10 flex flex-col gap-5">
-            <li>
-              <a href="/user/dashboard" className={linkClass('/user/dashboard')}>Dashboard</a>
-            </li>
-            <li>
-              <a href="/user/my-artists" className={linkClass('/user/my-artists')}>My Artists</a>
-            </li>
-            <li>
-              <a href="/user/discover" className={linkClass('/user/discover')}>Discover (WIP)</a>
-            </li>
-            <li>
-              <a href="/user/playlists" className={linkClass('/user/playlists')}>Playlists (WIP)</a>
-            </li>
-            <li>
-              <a href="/user/settings" className={linkClass('/user/settings')}>Settings</a>
-            </li>
-            <li>
-              <a href="/user/help" className={linkClass('/user/help')}>Help/FAQ</a>
-            </li>
+    <div className="flex">
+      <header className="flex xl:p-4 xl:flex xl:flex-col xl:min-h-screen xl:w-52 w-full xl:items-start items-center justify-between">
+        <div className="flex flex-row xl:flex xl:flex-col">
+          <h1 className="pl-2 text-4xl font-bold hover:animate-shake">
+            <a href="/">musipster</a>
+          </h1>
+        </div>
+        <div className="xl:flex-grow">
+          <ul className="flex xl:mt-10 xl:flex-col xl:gap-5">
+            <a href="/dashboard" className="group">
+              <li className={linkClass("/dashboard")}>Dashboard</li>
+            </a>
+            <a href="/graph" className="group">
+              <li className={linkClass("/graph")}>Graph</li>
+            </a>
+            {/* <a className="group cursor-pointer">
+                <li className={linkClass("/discover")}>Discover (WIP)</li>
+              </a>
+              <a className="group cursor-pointer">
+                <li className={linkClass("/playlists")}>Playlists (WIP)</li>
+              </a> */}
+            <a href="/settings" className="group cursor-pointer">
+              <li className={linkClass("/settings")}>Settings</li>
+            </a>
+            <a href="/faq" className="group">
+              <li className={linkClass("/faq")}>FAQ</li>
+            </a>
           </ul>
         </div>
-        <div className="logout pl-2">
-          <button>
-            <h1>@{username}</h1>
-          </button>
+        <div className="pl-2" ref={logoutBoxRef}>
+          {showLogOutBox ? (
+            <button
+              onClick={logOut}
+              className=" bg-red-400 py-2 px-4 w-fit rounded-2xl"
+            >
+              Log Out
+            </button>
+          ) : (
+            <button onClick={() => setShowLogOut(true)}>
+              <h1 className="w-fit">@{username}</h1>
+            </button>
+          )}
         </div>
       </header>
-      <div className="w-[2px] bg-gray-800"></div>
-    </>
-  );
-}
-
-// Define Test component
-function Test() {
-  // You would typically get this from your routing system
-  const currentPath = '/user/dashboard';
-
-  return (
-    <div className="flex min-h-screen flex-col items-center">
-      <div className="flex max-w-[85%] w-full">
-        <DefaultSidebar username="xxxxxxxxxxxxxxx" currentPath={currentPath}/>
-        <div className="">content</div>
-      </div>
+      <div className="w-[1px] bg-gray-700 h-screen hidden xl:block"></div>
     </div>
   );
 }
-
-export default Test;

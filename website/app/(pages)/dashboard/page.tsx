@@ -174,9 +174,9 @@ export default function MyArtists() {
           />
         </div>
         {!loading ? (
-          <div className="p-4 grid grid-cols-3 gap-5 w-full">
-            <section className="flex flex-col gap-5">
-              <div className="flex flex-row justify-center gap-5">
+          <div className="p-4 grid grid-cols-8 gap-5 w-full">
+            <section className="flex flex-col col-span-2 gap-5">
+              <div className="grid grid-cols-1 max:grid-cols-2 gap-3 justify-between w-fit">
                 <FollowerCount
                   className="bg-blue-700"
                   count={allUserArtists.size}
@@ -192,7 +192,8 @@ export default function MyArtists() {
                 <SimpleCharts genres={genreCount}></SimpleCharts>
               </div>
             </section>
-            <section className="">
+
+            <section className="col-span-3">
               <div className="flex flex-col bg-purple-700 p-4 rounded-3xl">
                 <h1>Following</h1>
                 <hr className="border-t-2 border-purple-500 my-2" />
@@ -209,7 +210,8 @@ export default function MyArtists() {
                 </div>
               </div>
             </section>
-            <section className="">
+
+            <section className="col-span-3">
               <div className="bg-red-500 p-4 rounded-3xl">
                 <h1>Add Artist</h1>
                 <hr className="border-t-2 border-red-300 my-2" />
