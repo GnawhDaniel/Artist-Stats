@@ -42,8 +42,8 @@ export default function Home() {
             </p>
             <p className="text-xl">
               <i>
-                "My friend, Daniel, is a snobby musipster who even built a
-                website for it."
+                {`"My friend, Daniel, is a snobby musipster who even built a
+                website for it."`}
               </i>
             </p>
           </div>
@@ -61,8 +61,8 @@ export default function Home() {
             </p>
             <p className="text-xl">
               <i>
-                "She is a true musipster, always attending local gigs and
-                festivals, cheering on emerging bands."
+                {`"She is a true musipster, always attending local gigs and
+                festivals, cheering on emerging bands."`}
               </i>
             </p>
           </div>
@@ -80,9 +80,9 @@ export default function Home() {
             </p>
             <p className="text-xl">
               <i>
-                "His musipster tendencies are evident from his vast collection
+                {`"His musipster tendencies are evident from his vast collection
                 of vinyl records and his disdain for anything on the top
-                charts."
+                charts."`}
               </i>
             </p>
           </div>
@@ -95,8 +95,8 @@ export default function Home() {
         <div className="mt-5">
           <h2 className="text-3xl">Etymology</h2>
           <p className="text-xl">
-            Shamelessly concocted from English music (from Greek mousikē) +
-            hipster (1940s jazz slang, likely from hep, "in the know").
+            {`Shamelessly concocted from English music (from Greek mousikē) +
+            hipster (1940s jazz slang, likely from hep, "in the know").`}
           </p>
         </div>
         <div className="mt-5">
