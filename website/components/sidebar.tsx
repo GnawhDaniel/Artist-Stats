@@ -1,4 +1,6 @@
+"use client";
 import { navigate } from "@/functions/actions";
+import { useEffect, useRef, useState } from "react";
 
 export default function Sidebar({
   username,
@@ -7,6 +9,24 @@ export default function Sidebar({
   username: string;
   currentPath: string;
 }) {
+  const [showLogOutBox, setShowLogOut] = useState(false);
+  const logoutBoxRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        logoutBoxRef.current &&
+        !logoutBoxRef.current.contains(event.target as Node)
+      ) {
+        setShowLogOut(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   const isActive = (path: string) => currentPath === path;
   const linkClass = (path: string) =>
@@ -14,26 +34,27 @@ export default function Sidebar({
       isActive(path) ? "font-bold italic" : " font-light "
     }`;
 
-  const logOut = async () => {
-    const response = await fetch("/api/deletecookie", {
-      method: "GET",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-    });
-
-    if (response.status == 200) {
-      navigate("/");
+    const logOut = async () => {
+      const response = await fetch('/api/deletecookie', {
+        method: 'GET',
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+      });
+  
+      if (response.status == 200) {
+        navigate("/")
+      }
     }
-  };
-
   return (
     <div className="flex">
-      <header className="p-4 flex flex-col min-h-screen justify-between w-52">
-        <div>
+      <header className="flex py-2 px-1 xl:p-4 xl:flex xl:flex-col xl:min-h-screen xl:w-52 w-full xl:items-start items-center justify-between">
+        <div className="flex flex-row xl:flex xl:flex-col">
           <h1 className="pl-2 text-4xl font-bold hover:animate-shake">
             <a href="/">musipster</a>
           </h1>
-          <ul className="mt-10 flex flex-col gap-5">
+        </div>
+        <div className="xl:flex-grow">
+          <ul className="flex xl:mt-10 xl:flex-col xl:gap-5">
             <a href="/dashboard" className="group">
               <li className={linkClass("/dashboard")}>Dashboard</li>
             </a>
@@ -41,11 +62,11 @@ export default function Sidebar({
               <li className={linkClass("/graph")}>Graph</li>
             </a>
             {/* <a className="group cursor-pointer">
-              <li className={linkClass("/discover")}>Discover (WIP)</li>
-            </a>
-            <a className="group cursor-pointer">
-              <li className={linkClass("/playlists")}>Playlists (WIP)</li>
-            </a> */}
+                <li className={linkClass("/discover")}>Discover (WIP)</li>
+              </a>
+              <a className="group cursor-pointer">
+                <li className={linkClass("/playlists")}>Playlists (WIP)</li>
+              </a> */}
             <a href="/settings" className="group cursor-pointer">
               <li className={linkClass("/settings")}>Settings</li>
             </a>
@@ -54,16 +75,22 @@ export default function Sidebar({
             </a>
           </ul>
         </div>
-        <div className="flex flex-col logout pl-2 group">
-          <button onClick={logOut} className="bg-red-400 py-2 rounded-2xl hidden group-hover:block">
-            Log Out
-          </button>
-          <button className="">
-            <h1>@{username}</h1>
-          </button>
+        <div className="pl-2" ref={logoutBoxRef}>
+          {showLogOutBox ? (
+            <button
+              onClick={logOut}
+              className=" bg-red-400 rounded-lg px-1 xl:py-2 xl:px-4 w-fit xl:rounded-2xl"
+            >
+              Log Out
+            </button>
+          ) : (
+            <button onClick={() => setShowLogOut(true)}>
+              <h1 className="w-fit">@{username}</h1>
+            </button>
+          )}
         </div>
       </header>
-      <div className="w-[1px] bg-gray-700 h-screen"></div>
+      <div className="w-[1px] bg-gray-700 h-screen hidden xl:block"></div>
     </div>
   );
 }

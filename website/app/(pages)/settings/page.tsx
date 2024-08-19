@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { getUser } from "@/functions/api";
 import { loadingElement } from "@/components/loading";
 import { error } from "console";
+import BottomBar from "@/components/bottombar";
 
 export default function Help() {
   const [loading, setLoading] = useState(true);
@@ -78,7 +79,7 @@ export default function Help() {
   }
 
   return (
-    <div className="flex h-screen flex-col items-center">
+    <div className="flex min-h-screen h-[100%] flex-col items-center">
       {msg ? (
         <h1 className="absolute bg-green-500 bottom-0 mb-5 p-4 rounded-xl">
           {msg}
@@ -94,8 +95,8 @@ export default function Help() {
         <></>
       )}
 
-      <div className="flex max-w-[90%] w-full">
-        <div>
+      <div className="flex flex-row sm:flex-col xl:max-w-[90%] w-full">
+        <div className="hidden sm:block">
           <Sidebar
             username={user?.username ?? ""}
             currentPath={usePathname() ?? ""}
@@ -104,10 +105,10 @@ export default function Help() {
         {loading ? (
           loadingElement
         ) : (
-          <div className="p-4 w-full h-full max-h-screen">
+          <div className="p-4 w-full">
             <h1 className="font-extrabold text-5xl italic">Settings</h1>
             <hr className="border-t-2 border-white my-2" />
-            <div className="flex justify-evenly">
+            <div className="flex flex-col sm:flex-row h-full gap-5">
               <div className="bg-orange-400 p-4 rounded-2xl">
                 <h1>Change Username</h1>
                 <hr className="border-t-2 border-orange-200 my-2" />
@@ -130,7 +131,7 @@ export default function Help() {
                 </form>
               </div>
 
-              <div className="bg-red-400 p-4 rounded-2xl h-full">
+              <div className="bg-red-400 p-4 rounded-2xl h-fit">
                 <h1>Delete Account</h1>
                 <hr className="border-t-2 border-orange-200 my-2" />
                 {confirmBox ? (
@@ -150,6 +151,7 @@ export default function Help() {
             </div>
           </div>
         )}
+        <BottomBar></BottomBar>
       </div>
     </div>
   );

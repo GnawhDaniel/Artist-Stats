@@ -16,6 +16,7 @@ import { navigate } from "@/functions/actions";
 import SimpleCharts from "@/components/PieChart";
 import { loadingElement } from "@/components/loading";
 import SearchBar from "@/components/SearchBar";
+import BottomBar from "@/components/bottombar";
 
 export default function MyArtists() {
   /*
@@ -166,17 +167,17 @@ export default function MyArtists() {
       ) : (
         <></>
       )}
-      <div className="flex max-w-[90%] w-full">
-        <div>
+      <div className="flex flex-col xl:flex-row xl:max-w-[90%] w-full">
+        <div className="hidden sm:block">
           <Sidebar
             username={user?.username || ""}
             currentPath={usePathname() ?? ""}
           />
         </div>
         {!loading ? (
-          <div className="p-4 grid grid-cols-3 gap-5 w-full">
-            <section className="flex flex-col gap-5">
-              <div className="flex flex-row justify-center gap-5">
+          <div className="p-4 grid sm:grid-cols-8 gap-5 w-full">
+            <section className="flex flex-col col-span-2 gap-5">
+              <div className="grid grid-cols-2 sm:grid-cols-1 max:grid-cols-2 gap-3 justify-between">
                 <FollowerCount
                   className="bg-blue-700"
                   count={allUserArtists.size}
@@ -192,7 +193,8 @@ export default function MyArtists() {
                 <SimpleCharts genres={genreCount}></SimpleCharts>
               </div>
             </section>
-            <section className="">
+
+            <section className="col-span-3">
               <div className="flex flex-col bg-purple-700 p-4 rounded-3xl">
                 <h1>Following</h1>
                 <hr className="border-t-2 border-purple-500 my-2" />
@@ -209,7 +211,8 @@ export default function MyArtists() {
                 </div>
               </div>
             </section>
-            <section className="">
+
+            <section className="col-span-3">
               <div className="bg-red-500 p-4 rounded-3xl">
                 <h1>Add Artist</h1>
                 <hr className="border-t-2 border-red-300 my-2" />
@@ -232,6 +235,7 @@ export default function MyArtists() {
           loadingElement
         )}
       </div>
+      <BottomBar></BottomBar>
     </div>
   );
 }

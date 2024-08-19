@@ -1,49 +1,43 @@
-import * as React from "react";
-import Stack from "@mui/material/Stack";
-import { PieChart } from "@mui/x-charts/PieChart";
+import React from 'react';
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
+import { Pie } from 'react-chartjs-2';
 
-// const data = [
-//   { label: 'Group A', value: 400 },
-//   { label: 'Group B', value: 300 },
-//   { label: 'Group C', value: 300 },
-//   { label: 'Group D', value: 200 },
-// ];
+ChartJS.register(ArcElement, Tooltip, Legend);
 
 interface Prop {
   genres: any[];
 }
 
 export default function PieChartWithPaddingAngle({ genres }: Prop) {
-  const [isHidden, setIsHidden] = React.useState(false);
-  const series = [
-    {
-      data: genres,
-      innerRadius: 50,
-      outerRadius: 100,
-      paddingAngle: 5,
-      cornerRadius: 5,
-      startAngle: 0,
-      endAngle: 360,
-      cx: 130,
-      cy: 120,
-    },
-  ];
+  const labels = genres.map(genre => genre.label);
+  const values = genres.map(genre => genre.value);
 
-  return (
-    <PieChart
-      series={series}
-      slotProps={{
-        legend: {
-          // direction: 'row',
-          // position: {vertical: 'top', horizontal: "middle"},
-          hidden: isHidden,
-          labelStyle: {
-            fill: "white"
-          }
-        },
-      }}
-      width={450}
-      height={250}
-    />
-  );
+  const data = {
+    labels: labels,
+    datasets: [
+      {
+        label: 'Count',
+        data: values,
+        backgroundColor: [
+          'rgba(255, 99, 132, 0.90)',
+          'rgba(54, 162, 235, 0.90)',
+          'rgba(255, 206, 86, 0.90)',
+          'rgba(75, 192, 192, 0.90)',
+          'rgba(153, 102, 255, 0.90)',
+          'rgba(155, 200, 100, 0.90)',
+        ],
+        borderColor: [
+          'rgba(255, 99, 132, 1)',
+          'rgba(54, 162, 235, 1)',
+          'rgba(255, 206, 86, 1)',
+          'rgba(75, 192, 192, 1)',
+          'rgba(153, 102, 255, 1)',
+          'rgba(155, 200, 100, 1)',
+        ],
+        borderWidth: 1,
+      },
+    ],
+  };
+  return <Pie data={data} />;
+
 }

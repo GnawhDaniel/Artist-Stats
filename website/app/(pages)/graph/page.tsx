@@ -8,6 +8,7 @@ import { getAllArtists, getSingleArtist, getUser } from "@/functions/api";
 import { usePathname, useSearchParams } from "next/navigation";
 import { User } from "@/components/interfaces";
 import { loadingElement } from "@/components/loading";
+import BottomBar from "@/components/bottombar";
 
 function VerticalText({ text }: { text: string }) {
   if (!text) {
@@ -122,8 +123,8 @@ export default function Dashboard() {
       ) : (
         <></>
       )}
-      <div className="flex max-w-[90%] w-full">
-        <div>
+      <div className="flex flex-col xl:flex-row xl:max-w-[90%] w-full">
+        <div className="hidden sm:block">
           <Sidebar
             username={user?.username ?? ""}
             currentPath={usePathname() ?? ""}
@@ -158,6 +159,7 @@ export default function Dashboard() {
             <VerticalText text={currentArtist} />
           </>
         )}
+        <BottomBar></BottomBar>
       </div>
     </div>
   );

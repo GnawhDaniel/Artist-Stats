@@ -16,6 +16,8 @@ export default function handler(
       ).toUTCString()}; Path=/`
     );
     
+    // TODO: Add "secure;" back into ^^^^
+
     res.redirect(307, "/dashboard");
 
     // res.redirect(307, "/dashboard");
