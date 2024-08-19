@@ -1,12 +1,11 @@
 import datetime
-from typing import Annotated, List, Optional
-from fastapi import APIRouter, Depends, Cookie, HTTPException
+from typing import Annotated, List
+from fastapi import APIRouter, Cookie, HTTPException
 from pydantic import BaseModel, Field
-from sqlalchemy import UUID, text
-from utils import db_dependency, get_session, is_access_token_expired, is_session_valid
+from sqlalchemy import text
+from utils import db_dependency, get_session, is_session_valid
 from starlette import status
-from models import ArtistGenres, Session, GoogleUsers, ArtistStats, Artists, MasterArtistView, UserFollowing, User, GoogleUserFollowing
-from .auth import get_current_user
+from models import ArtistGenres, Session, GoogleUsers, ArtistStats, Artists, GoogleUserFollowing
 
 router = APIRouter(
     prefix='/artists',

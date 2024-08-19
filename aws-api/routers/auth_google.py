@@ -43,7 +43,7 @@ flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
             'openid'])
 flow.redirect_uri = REDIRECT_URI
 
-website = "http://localhost"
+website = "http://website"
 
 
 class SessionCheck(BaseModel):
