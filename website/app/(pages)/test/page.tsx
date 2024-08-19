@@ -85,7 +85,7 @@ export default function Sidebar({
             </button>
           ) : (
             <button onClick={() => setShowLogOut(true)}>
-              <h1 className="w-fit">@{username}</h1>
+              <h1 className="w-fit">@danieljayhwang</h1>
             </button>
           )}
         </div>

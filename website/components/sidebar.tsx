@@ -47,7 +47,7 @@ export default function Sidebar({
     }
   return (
     <div className="flex">
-      <header className="flex xl:p-4 xl:flex xl:flex-col xl:min-h-screen xl:w-52 w-full xl:items-start items-center justify-between">
+      <header className="flex py-2 px-1 xl:p-4 xl:flex xl:flex-col xl:min-h-screen xl:w-52 w-full xl:items-start items-center justify-between">
         <div className="flex flex-row xl:flex xl:flex-col">
           <h1 className="pl-2 text-4xl font-bold hover:animate-shake">
             <a href="/">musipster</a>
@@ -79,7 +79,7 @@ export default function Sidebar({
           {showLogOutBox ? (
             <button
               onClick={logOut}
-              className=" bg-red-400 py-2 px-4 w-fit rounded-2xl"
+              className=" bg-red-400 rounded-lg px-1 xl:py-2 xl:px-4 w-fit xl:rounded-2xl"
             >
               Log Out
             </button>

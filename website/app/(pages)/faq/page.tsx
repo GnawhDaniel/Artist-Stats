@@ -23,7 +23,7 @@ export default function Help() {
 
   return (
     <div className="flex h-screen flex-col items-center">
-      <div className="flex max-w-[90%] w-full">
+      <div className="flex flex-col xl:flex-row xl:max-w-[90%] w-full">
         <div>
           <Sidebar
             username={user?.username ?? ""}

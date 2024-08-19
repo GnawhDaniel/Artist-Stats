@@ -166,7 +166,7 @@ export default function MyArtists() {
       ) : (
         <></>
       )}
-      <div className="flex max-w-[90%] w-full">
+      <div className="flex flex-col xl:flex-row xl:max-w-[90%] w-full">
         <div>
           <Sidebar
             username={user?.username || ""}
@@ -174,9 +174,9 @@ export default function MyArtists() {
           />
         </div>
         {!loading ? (
-          <div className="p-4 grid grid-cols-8 gap-5 w-full">
+          <div className="p-4 grid sm:grid-cols-8 gap-5 w-full">
             <section className="flex flex-col col-span-2 gap-5">
-              <div className="grid grid-cols-1 max:grid-cols-2 gap-3 justify-between w-fit">
+              <div className="grid grid-cols-2 sm:grid-cols-1 max:grid-cols-2 gap-3 justify-between">
                 <FollowerCount
                   className="bg-blue-700"
                   count={allUserArtists.size}

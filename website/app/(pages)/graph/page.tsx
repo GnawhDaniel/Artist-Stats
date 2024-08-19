@@ -122,7 +122,7 @@ export default function Dashboard() {
       ) : (
         <></>
       )}
-      <div className="flex max-w-[90%] w-full">
+      <div className="flex flex-col xl:flex-row xl:max-w-[90%] w-full">
         <div>
           <Sidebar
             username={user?.username ?? ""}
