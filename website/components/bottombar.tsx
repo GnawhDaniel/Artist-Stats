@@ -2,8 +2,6 @@
 import { navigate } from '@/functions/actions';
 import { HomeIcon, PresentationChartLineIcon, Cog8ToothIcon, ArrowRightStartOnRectangleIcon, QuestionMarkCircleIcon } from '@heroicons/react/24/solid'
 
-
-
 export default function BottomBar() {
 
   const logOut = async () => {
@@ -19,7 +17,7 @@ export default function BottomBar() {
   }
 
   return (
-      <div className="fixed bottom-0 bg-[#141414] w-full">
+      <div className="block sm:hidden fixed bottom-0 bg-[#141414] w-full">
         <div className="h-[1px] bg-gray-700"></div>
         <div className="flex p-2 mt-1 h-12 justify-evenly">
           <HomeIcon onClick={()=>navigate("/dashboard")} className='hover:cursor-pointer'></HomeIcon>

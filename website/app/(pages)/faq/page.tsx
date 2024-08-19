@@ -5,6 +5,7 @@ import { User } from "@/components/interfaces";
 import { useEffect, useState } from "react";
 import { getUser } from "@/functions/api";
 import { loadingElement } from "@/components/loading";
+import BottomBar from "@/components/bottombar";
 
 export default function Help() {
   const [loading, setLoading] = useState(false);
@@ -24,7 +25,7 @@ export default function Help() {
   return (
     <div className="flex h-screen flex-col items-center">
       <div className="flex flex-col xl:flex-row xl:max-w-[90%] w-full">
-        <div>
+        <div className="hidden sm:block">
           <Sidebar
             username={user?.username ?? ""}
             currentPath={usePathname() ?? ""}
@@ -36,7 +37,7 @@ export default function Help() {
           <div className="p-4 w-full h-full max-h-screen">
             <h1 className="font-extrabold text-5xl italic">FAQ</h1>
             <hr className="border-t-2 border-white my-2" />
-            <ul className="flex flex-col gap-5 max-h-[93%] bg-gray-700 p-4 rounded-3xl overflow-auto">
+            <ul className="flex flex-col max-h-[83%] gap-5 sm:max-h-[93%] bg-gray-700 p-4 rounded-3xl overflow-auto">
               <li>
                 <h2 className="font-bold">What is the purpose of this site?</h2>
                 <p className="ml-6 font-light">
@@ -104,6 +105,7 @@ export default function Help() {
             </ul>
           </div>
         )}
+      <BottomBar></BottomBar>
       </div>
     </div>
   );

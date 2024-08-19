@@ -16,6 +16,7 @@ import { navigate } from "@/functions/actions";
 import SimpleCharts from "@/components/PieChart";
 import { loadingElement } from "@/components/loading";
 import SearchBar from "@/components/SearchBar";
+import BottomBar from "@/components/bottombar";
 
 export default function MyArtists() {
   /*
@@ -167,7 +168,7 @@ export default function MyArtists() {
         <></>
       )}
       <div className="flex flex-col xl:flex-row xl:max-w-[90%] w-full">
-        <div>
+        <div className="hidden sm:block">
           <Sidebar
             username={user?.username || ""}
             currentPath={usePathname() ?? ""}
@@ -234,6 +235,7 @@ export default function MyArtists() {
           loadingElement
         )}
       </div>
+      <BottomBar></BottomBar>
     </div>
   );
 }
