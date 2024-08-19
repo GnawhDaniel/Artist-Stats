@@ -5,6 +5,7 @@ import { submitLoginForm } from "./submitLoginForm";
 import { navigate } from "@/functions/actions";
 // import { isAuthenticated } from "@/functions/auth";
 import { googleAuth } from "@/functions/api";
+import Image from "next/image";
 
 export default function Login() {
 
@@ -33,7 +34,7 @@ export default function Login() {
             onClick={handleLogin}
             className="flex bg-white p-2 text-black items-center gap-2 rounded-2xl"
           >
-            <img src="/google.svg" alt="" />
+            <Image src="/google.svg" alt="" width={30} height={30}/>
             <p>Sign in with Google</p>
           </button>
         </div>
