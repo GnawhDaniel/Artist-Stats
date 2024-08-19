@@ -1,4 +1,4 @@
-from routers import auth, following, auth_google
+from routers import following, auth_google
 from database import engine
 from fastapi import FastAPI
 import models
