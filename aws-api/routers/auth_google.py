@@ -43,7 +43,7 @@ flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
             'openid'])
 flow.redirect_uri = REDIRECT_URI
 
-website = "http://website"
+website = os.getenv("WEBSITE_ENDPOINT")
 
 
 class SessionCheck(BaseModel):
@@ -164,7 +164,7 @@ def authenticate(db: db_dependency, session_id: Annotated[str | None, Cookie()] 
 @router.get("/callback")
 def callback(db: db_dependency, request: Request):
     if request.query_params.get("error"):
-        return RedirectResponse(f"{website}:3000")
+        return RedirectResponse(f"{website}")
     
     # Get state and code from query
     state = request.query_params.get("state")
@@ -239,9 +239,9 @@ def callback(db: db_dependency, request: Request):
         "expires_at": expires_str
     }
     encoded_data = urllib.parse.urlencode(redirect_data)
-
+    print(website)
     response = RedirectResponse(
-        url=f"{website}:3000/api/set-session-cookie?{encoded_data}")
+        url=f"{website}/api/set-session-cookie?{encoded_data}")
 
     return response
 

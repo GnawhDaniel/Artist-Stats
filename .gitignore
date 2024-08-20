@@ -19,6 +19,7 @@ test_scripts/
 todo.txt
 
 aws-api/routers/auth.py
+aws-api/routers/__auth.py
 aws-api/.git
 
 .vscode
