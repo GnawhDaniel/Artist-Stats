@@ -33,7 +33,7 @@ interface ListProps {
   artistName: string;
 }
 
-function appendNullDates(data: DataItem[]) {  
+function appendNullDates(data: DataItem[]) {
   const transformed_data = data.map((entry) => {
     const [year, month, day] = entry.date.split("-").map(Number);
     return {
@@ -46,7 +46,9 @@ function appendNullDates(data: DataItem[]) {
     return transformed_data;
   }
 
-  const new_data: { date: Date; followers: number | null }[] = [transformed_data[0]];
+  const new_data: { date: Date; followers: number | null }[] = [
+    transformed_data[0],
+  ];
 
   let previous: Date = new Date(transformed_data[0].date.getTime());
 
@@ -58,19 +60,16 @@ function appendNullDates(data: DataItem[]) {
       (1000 * 60 * 60 * 24);
 
     if (differenceInDays > 1) {
-      let a = 0
-      for (let i = 1; i < (differenceInDays); i++) {
-        const temp = new Date(previous.getTime())
+      for (let i = 1; i < differenceInDays; i++) {
+        const temp = new Date(previous.getTime());
         temp.setDate(temp.getDate() + 1);
         previous = temp;
-        new_data.push({ date: new Date(temp), followers: NaN});
+        new_data.push({ date: new Date(temp), followers: NaN });
       }
-
     } else {
-
       new_data.push({
         date: new Date(transformed_data[index].date),
-        followers: transformed_data[index].followers
+        followers: transformed_data[index].followers,
       });
       previous = new Date(transformed_data[index].date.getTime());
       index++;
@@ -79,7 +78,12 @@ function appendNullDates(data: DataItem[]) {
   return new_data;
 }
 
-export default function Graph({ data, minimum, maximum, artistName}: ListProps) {
+export default function Graph({
+  data,
+  minimum,
+  maximum,
+  artistName,
+}: ListProps) {
   const data_transformed: { date: Date; followers: number | null }[] =
     appendNullDates(data);
   const dates = data_transformed.map((d) => d.date.toDateString());
@@ -101,7 +105,7 @@ export default function Graph({ data, minimum, maximum, artistName}: ListProps) 
       x: {
         ticks: {
           color: "rgb(220,220,220)",
-          beginAtZero: true
+          beginAtZero: true,
         },
         grid: {
           display: false,
@@ -124,19 +128,29 @@ export default function Graph({ data, minimum, maximum, artistName}: ListProps) 
     },
   };
 
+  const skipped = (ctx: any, value: number[] | string) =>
+    ctx.p0.skip || ctx.p1.skip ? value : undefined;
+  const down = (ctx: any, value: string) =>
+    ctx.p0.parsed.y > ctx.p1.parsed.y ? value : undefined;
+
+
   const dataset = {
     labels: dates,
     datasets: [
       {
         label: "Follower Count",
         data: followers,
-        borderColor: "rgb(255,140,0)",
-        backgroundColor: "rgba(255,165,0, 0.5)",
+        borderColor: "rgb(255, 255, 255)",
+        backgroundColor: "rgba(255,255,255,0.8)",
         spanGaps: true,
-        pointRadius: 5
+        pointRadius: 5,
+        segment: {
+          borderColor: (ctx: any) => skipped(ctx, "gray") || down(ctx, "red") as string,
+          borderDash: (ctx: any) => skipped(ctx, [1, 1]) as number[] | undefined,
+        },
       },
     ],
   };
-
+  // @ts-ignore
   return <Line options={options} data={dataset} />;
 }
