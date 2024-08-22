@@ -21,9 +21,38 @@ class addArtistReq(BaseModel):
     genres: List[str]
 
 
+class RemoveArtistReq(BaseModel):
+    artist_id: str
+    artist_name: str
+
+
+@router.post("/remove-artist", status_code=status.HTTP_200_OK)
+async def removeArtist(db: db_dependency, artist: RemoveArtistReq, session_id: Annotated[str | None, Cookie()] = None):
+    session = get_session(session_id, db)
+    if not is_session_valid(session, db):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Could not find user session or session is invalid")
+
+    # Attempt to remove artist from their following list
+    result = db.query(GoogleUserFollowing).filter(
+        GoogleUserFollowing.artist_id == artist.artist_id, GoogleUserFollowing.id == session.google_id).delete(synchronize_session=False)
+
+    if (result):
+        try:
+            db.commit()
+            return {"message": f"{artist.artist_name} was removed from followers list"}
+        except Exception as e:
+            print(e)
+            db.rollback()
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to remove artist from followers list"
+            )
+
+    return {"message": "artist not found in database, no action was done"}
+
+
 @router.post("/add-artist", status_code=status.HTTP_200_OK)
 async def addArtist(db: db_dependency, artist: addArtistReq, session_id: Annotated[str | None, Cookie()] = None):
-    print(artist)
     session = get_session(session_id, db)
     # No token provided
     # Must check this because of DB schema design
@@ -119,7 +148,7 @@ async def fetch_artists_query(db: db_dependency, query: str | None = None, sessi
             filter(
                 GoogleUserFollowing.id == user.google_id,
                 Artists.artist_name.ilike(f'%{query}%')
-            ).all()
+        ).all()
         # .filter(
         #     Artists.artist_name.ilike(f'%{query}%')).all()
     return artists
