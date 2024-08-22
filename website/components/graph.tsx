@@ -141,7 +141,8 @@ export default function Graph({ data, minimum, maximum, artistName}: ListProps) 
         data: followers,
         borderColor: "rgb(255,140,0)",
         backgroundColor: "rgba(255,165,0, 0.5)",
-        spanGaps: true
+        spanGaps: true,
+        pointRadius: 5
       },
     ],
   };
