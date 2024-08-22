@@ -12,15 +12,12 @@ interface ListProps {
 }
 
 export default function List({ artists, onClickArtist, className }: ListProps) {
-  if (artists.length === 0) {
-    return <></>;
-  }
-
   // State Variables
   const [anchor, setAnchor] = useState<null | HTMLElement>(null);
   const listRef = useRef<HTMLDivElement | null>(null);
   const [artistID, setArtistID] = useState("");
   const [artistName, setArtistName] = useState("");
+
 
   // Hide Popup upon scroll event
   const handleScroll = useCallback(() => {
@@ -28,6 +25,7 @@ export default function List({ artists, onClickArtist, className }: ListProps) {
       setAnchor(null);
     }
   }, [anchor]);
+
   useEffect(() => {
     const listElement = listRef.current;
 
@@ -49,6 +47,7 @@ export default function List({ artists, onClickArtist, className }: ListProps) {
     };
   }, [handleScroll]);
   
+  
   // Create Popup When Clicking on Elipsis
   const handleClick = (event: React.MouseEvent<HTMLElement>, artist_id: string, artist_name: string) => {
     setAnchor(anchor ? null : event.currentTarget);
@@ -57,13 +56,17 @@ export default function List({ artists, onClickArtist, className }: ListProps) {
   };
   const open = Boolean(anchor);
   const id = open ? "simple-popper" : undefined;
-
+  
   // Handle Delete
   const handleDelete = async (artist_id: string, artist_name: string) => {
     setAnchor(null);
     await onClickArtist(artist_id, artist_name, "delete");
   };
-
+  
+  if (artists.length === 0) {
+    return <></>;
+  }
+  
   // TSX
   return (
     <div ref={listRef} className="max-h-80 lg:max-h-searchPopUp overflow-y-auto">
