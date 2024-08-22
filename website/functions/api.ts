@@ -108,3 +108,16 @@ export async function googleAuth()
   });
   return await response.json()
 }
+
+export async function deleteArtist(artist_id: string ,artist_name: string) {
+  const response = await fetch("/api/artists/delete-artist", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify({
+      artist_id: artist_id,
+      artist_name: artist_name
+    }),
+  });
+  return response;
+}

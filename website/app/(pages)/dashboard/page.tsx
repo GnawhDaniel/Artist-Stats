@@ -1,6 +1,7 @@
 "use client";
 import {
   addArtistToUser,
+  deleteArtist,
   getAllArtists,
   getGenreCount,
   getSpotifySearch,
@@ -97,12 +98,32 @@ export default function MyArtists() {
     setArtists(data);
   };
 
-  const onClickArtist = async (artist_id: string, artist_name: string) => {
-    sessionStorage.setItem(
-      "redirectData",
-      JSON.stringify({ artist_id: artist_id, artist_name: artist_name })
-    );
-    navigate(`/graph`);
+  const onClickArtist = async (
+    artist_id: string,
+    artist_name: string,
+    mode = "dashboard"
+  ) => {
+    if (mode == "dashboard") {
+      // Navigate to dashboard
+      sessionStorage.setItem(
+        "redirectData",
+        JSON.stringify({ artist_id: artist_id, artist_name: artist_name })
+      );
+      navigate(`/graph`);
+    } else if (mode == "delete") {
+      const response = await deleteArtist(artist_id, artist_name);
+      if (response.status == 200) {
+        const body = await response.json();
+        setAddMsg(body.message);
+
+        const updatedArtists = artists.filter(
+          (artist) => artist.artist_id !== artist_id
+        );
+
+        setArtists(updatedArtists);
+        setAllUserArtists(new Set(updatedArtists));
+      }
+    }
   };
 
   const onSearchResult = async (data: any) => {
@@ -123,7 +144,6 @@ export default function MyArtists() {
       followers,
       genres
     );
-    // console.log(res);
     if ("code" in res && res.code == 200) {
       setAddMsg(`${artist_name} was succesfully added.`);
     }
@@ -207,7 +227,7 @@ export default function MyArtists() {
                     className="hover:bg-purple-500 rounded-lg"
                     onClickArtist={onClickArtist}
                     artists={artists}
-                  ></List>
+                  />
                 </div>
               </div>
             </section>
@@ -226,7 +246,7 @@ export default function MyArtists() {
                     className="hover:bg-red-300 rounded-lg"
                     onClickArtist={addArtist}
                     artistSet={allUserArtists}
-                  ></ListAdd>
+                  />
                 </div>
               </div>
             </section>
