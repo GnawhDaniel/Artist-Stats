@@ -114,8 +114,14 @@ async def fetch_artists_query(db: db_dependency, query: str | None = None, sessi
         artists = [{'artist_id': artist_id, 'artist_name': artist_name}
                    for artist_id, artist_name in artists]
     else:
-        artists = db.query(Artists).filter(
-            Artists.artist_name.ilike(f'%{query}%')).all()
+        artists = db.query(Artists).\
+            join(GoogleUserFollowing, Artists.artist_id == GoogleUserFollowing.artist_id).\
+            filter(
+                GoogleUserFollowing.id == user.google_id,
+                Artists.artist_name.ilike(f'%{query}%')
+            ).all()
+        # .filter(
+        #     Artists.artist_name.ilike(f'%{query}%')).all()
     return artists
 
 

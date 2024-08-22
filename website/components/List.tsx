@@ -10,7 +10,7 @@ export default function List({ artists, onClickArtist, className }: ListProps) {
   }
   console.log("list", artists)
   return (
-    <div className="max-h-80 lg:max-h-searchPopUp overflow-y-auto no-scrollbar">
+    <div className="max-h-80 lg:max-h-searchPopUp overflow-y-auto">
       <ul>
         {artists.map((artist, index) => (
           <li key={index}>
@@ -63,7 +63,7 @@ export function ListAdd({
   }
 
   return (
-    <div className="max-h-80 lg:max-h-searchPopUp overflow-y-auto no-scrollbar">
+    <div className="max-h-80 lg:max-h-searchPopUp overflow-y-auto">
       <ul>
         {artists.map((artist, index) => {
           const isArtistInSet = artistSet.has(artist["artist_id"]);
