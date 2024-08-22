@@ -97,13 +97,13 @@ export default function Dashboard() {
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
-              stroke-width="1.5"
+              strokeWidth="1.5"
               stroke="currentColor"
               className="size-8 text-white bg-red-600 rounded-full hover:bg-red-700 transition-all"
             >
               <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
+                strokeLinecap="round"
+                strokeLinejoin="round"
                 d="M6 18 18 6M6 6l12 12"
               />
             </svg>
@@ -153,10 +153,12 @@ export default function Dashboard() {
           loadingElement
         ) : (
           <>
-            <div className="flex flex-col w-full p-4 gap-5">
-              <Graph data={data} minimum={minimum} maximum={maximum}></Graph>
+            <div className="flex flex-col w-full p-4 gap-5 h-[93vh]">
+              <Graph artistName={currentArtist} data={data} minimum={minimum} maximum={maximum}></Graph>
             </div>
-            <VerticalText text={currentArtist} />
+            <div className="hidden xl:block">
+              <VerticalText text={currentArtist} />
+            </div>
           </>
         )}
         <BottomBar></BottomBar>
