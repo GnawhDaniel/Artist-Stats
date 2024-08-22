@@ -3,7 +3,6 @@
 "use server";
 
 export async function submitLoginForm(username: string, password: string) {
-  console.log(process.env.API_ENDPOINT + "/auth/token");
   //   Here you would typically make an API call to authenticate the user
   //   For example:
   const formData = new URLSearchParams();

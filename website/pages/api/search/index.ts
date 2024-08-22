@@ -24,7 +24,6 @@ export default async function handler(
     const access_token = await getAccessToken();
 
     const { query } = req.query;
-    console.log("query", query, req)
     let apiURL = `https://api.spotify.com/v1/search?q=${query}&type=artist&limit=50&offset=0`;
 
     const response = await fetch(apiURL, {

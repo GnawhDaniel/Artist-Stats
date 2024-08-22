@@ -7,7 +7,6 @@ export default async function handler(
   res: NextApiResponse
 ) {
   try {
-    console.log("Cookie", req.headers.cookie)
     const response = await fetch(process.env.API_ENDPOINT + "/google-auth/me", {
         method: "GET",
         headers: {

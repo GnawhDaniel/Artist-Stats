@@ -9,7 +9,6 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
-import { time } from "console";
 import { Line } from "react-chartjs-2";
 
 ChartJS.register(
@@ -58,8 +57,6 @@ function appendNullDates(data: DataItem[]) {
       (transformed_data[index].date.getTime() - previous.getTime()) /
       (1000 * 60 * 60 * 24);
 
-    console.log("Difference in days", differenceInDays)
-
     if (differenceInDays > 1) {
       let a = 0
       for (let i = 1; i < (differenceInDays); i++) {
@@ -67,10 +64,7 @@ function appendNullDates(data: DataItem[]) {
         temp.setDate(temp.getDate() + 1);
         previous = temp;
         new_data.push({ date: new Date(temp), followers: NaN});
-        a++;
       }
-
-      console.log(a)
 
     } else {
 
@@ -90,9 +84,6 @@ export default function Graph({ data, minimum, maximum, artistName}: ListProps) 
     appendNullDates(data);
   const dates = data_transformed.map((d) => d.date.toDateString());
   const followers = data_transformed.map((d) => d.followers);
-
-  console.log(dates);
-  console.log(followers)
 
   const options = {
     responsive: true,

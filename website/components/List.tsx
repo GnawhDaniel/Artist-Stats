@@ -8,7 +8,6 @@ export default function List({ artists, onClickArtist, className }: ListProps) {
   if (artists.length === 0) {
     return <></>;
   }
-  console.log("list", artists)
   return (
     <div className="max-h-80 lg:max-h-searchPopUp overflow-y-auto">
       <ul>

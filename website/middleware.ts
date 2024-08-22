@@ -3,7 +3,7 @@ import { NextRequest } from "next/server";
 import { isAuthenticatedGoogle } from "./functions/auth";
 
 export async function middleware(request: NextRequest) {
-  console.log("MIDDLEWARE LOG:");
+  // console.log("MIDDLEWARE LOG:");
   // console.log("Full URL:", request.url);
   // console.log("Pathname:", request.nextUrl.pathname);
   // console.log("Search:", request.nextUrl.search);
@@ -15,10 +15,10 @@ export async function middleware(request: NextRequest) {
   // console.log(authenticated)
   // let authenticated =true;
   if (!authenticated && !request.url.endsWith("/login")) {
-    console.log("return to login");
+    // console.log("return to login");
     return NextResponse.redirect(new URL("/login", request.url));
   } else if (authenticated && request.url.endsWith("/login")) {
-    console.log("Redirecting to dashboard.");
+    // console.log("Redirecting to dashboard.");
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }
   return NextResponse.next();

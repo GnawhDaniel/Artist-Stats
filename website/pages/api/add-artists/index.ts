@@ -15,7 +15,6 @@ export default async function handler(
   if (req.method === "POST") {
     try {
       const { artist_id, artist_name, image_url, followers, genres }: Artist = req.body;
-      console.log(req.body);
       const response = await fetch(
         process.env.API_ENDPOINT + "/artists/add-artist",
         {

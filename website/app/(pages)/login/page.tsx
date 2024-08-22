@@ -11,9 +11,7 @@ export default function Login() {
 
   const handleLogin = async (e: any) => {
     e.preventDefault();
-    console.log("het")
     const response = await googleAuth();
-    console.log(response);
     navigate(response.url);
   };
 

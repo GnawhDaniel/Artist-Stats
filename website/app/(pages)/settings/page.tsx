@@ -5,7 +5,6 @@ import { User } from "@/components/interfaces";
 import { useEffect, useState } from "react";
 import { getUser } from "@/functions/api";
 import { loadingElement } from "@/components/loading";
-import { error } from "console";
 import BottomBar from "@/components/bottombar";
 
 export default function Help() {
@@ -54,9 +53,7 @@ export default function Help() {
         setErrorMsg("");
         setMsg(`Changed username from ${user?.username} to ${username}`);
       } else {
-        console.log(response);
         let res = await response.json();
-        console.log(res);
         setMsg("");
         setErrorMsg(res.message);
       }
