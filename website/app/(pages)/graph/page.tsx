@@ -10,7 +10,7 @@ import { User } from "@/components/interfaces";
 import { loadingElement } from "@/components/loading";
 import BottomBar from "@/components/bottombar";
 
-function VerticalText({ text }: { text: string }) {
+function VerticalText({ text, growth }: { text: string, growth: number }) {
   if (!text) {
     return <></>;
   }
@@ -22,24 +22,32 @@ function VerticalText({ text }: { text: string }) {
         textOrientation: "upright",
         letterSpacing: "-12px", // Adjust this value to reduce space between characters
       }}
-      className="absolute right-2 top-20 bg-slate-800 p-2 rounded-3xl select-none"
+      className="absolute right-2 top-20 select-none"
     >
-      {text.split("").map((char, index) => (
-        <span key={index}>{char}</span>
-      ))}
+      <div className="flex gap-3">
+        <div className="bg-slate-800 p-2 rounded-3xl">
+          {text.split("").map((char, index) => (
+            <span key={index}>{char}</span>
+          ))}
+        </div>
+        <div className={`p-2 rounded-3xl ${growth > 0 ? "bg-green-600" : "bg-red-600"}`}>
+          <h1>{growth > 0 ? `+${growth}` : growth}</h1>
+        </div>
+      </div>
     </div>
   );
 }
 
 export default function GraphPage() {
   const [loading, setLoading] = useState(true);
-  const [data, setData] = useState([]);
+  const [data, setData] = useState<{date: string, followers: number}[]>([]);
   const [minimum, setMinimum] = useState(0);
   const [maximum, setMax] = useState(0);
   const [artists, SetArtists] = useState([]);
   const [searchWindow, setSearchWindow] = useState(false);
   const [currentArtist, setArtist] = useState("");
   const [user, setUser] = useState<User>();
+  const [totalGrowth, setTotal] = useState<number>(0);
   // const searchParams = useSearchParams();
 
   const handleSearchResult = (data: any) => {
@@ -78,8 +86,8 @@ export default function GraphPage() {
 
   const onClickArtist = async (artist_id: string, artist_name: string) => {
     const res = await getSingleArtist(artist_id);
-    // SetArtists([]);
     setData(res["data"]);
+    setTotal(res.data[res.data.length-1].followers - res.data[0].followers);
     setMinimum(res["min_followers"]["followers"]);
     setMax(res["max_followers"]["followers"]);
     setArtist(artist_name);
@@ -157,7 +165,7 @@ export default function GraphPage() {
               <Graph artistName={currentArtist} data={data} minimum={minimum} maximum={maximum}></Graph>
             </div>
             <div className="hidden xl:block">
-              <VerticalText text={currentArtist} />
+              <VerticalText text={currentArtist} growth={totalGrowth}/>
             </div>
           </>
         )}
