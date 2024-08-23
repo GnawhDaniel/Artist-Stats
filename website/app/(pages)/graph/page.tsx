@@ -34,12 +34,12 @@ function VerticalText({ text }: { text: string }) {
 }
 
 export default function GraphPage() {
-  ReactGA.send({
-    hitType: "pageview",
-    page: "/graph",
-    title: "Graph"
+  useEffect(()=>{
+    ReactGA.send({
+      hitType: "pageview",
+      page: window.location.pathname
+    })
   })
-
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState([]);
   const [minimum, setMinimum] = useState(0);

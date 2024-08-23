@@ -31,12 +31,12 @@ export default function MyArtists() {
       - Might have to add spotify url field onto names db table
     - Delete feature on Following 
   */
-
+  useEffect(()=>{
     ReactGA.send({
       hitType: "pageview",
-      page: "/dashboard",
-      title: "Dashboard"
+      page: window.location.pathname
     })
+  })
 
   const [genreCount, setGenreCount] = useState([]); // Sum of each genre (k-indie: 10, rap: 3, etc.)
   const [genreSum, setGenreSum] = useState(0); // Sum of all distinct genres

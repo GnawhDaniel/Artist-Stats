@@ -3,14 +3,16 @@
 import { navigate } from "@/functions/actions";
 import { googleAuth } from "@/functions/api";
 import Image from "next/image";
+import { useEffect } from "react";
 import ReactGA from "react-ga4";
 
 
 export default function Login() {
-  ReactGA.send({
-    hitType: "pageview",
-    page: "/login",
-    title: "Login"
+  useEffect(()=>{
+    ReactGA.send({
+      hitType: "pageview",
+      page: window.location.pathname
+    })
   })
 
   const handleLogin = async (e: any) => {

@@ -9,12 +9,12 @@ import BottomBar from "@/components/bottombar";
 import ReactGA from "react-ga4";
 
 export default function Help() {
-  ReactGA.send({
-    hitType: "pageview",
-    page: "/faq",
-    title: "FAQ"
+  useEffect(()=>{
+    ReactGA.send({
+      hitType: "pageview",
+      page: window.location.pathname
+    })
   })
-
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState<User>();
 

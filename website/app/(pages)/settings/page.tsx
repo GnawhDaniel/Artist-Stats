@@ -10,10 +10,11 @@ import ReactGA from "react-ga4";
 
 
 export default function Settings() {
-  ReactGA.send({
-    hitType: "pageview",
-    page: "/settings",
-    title: "Settings"
+  useEffect(()=>{
+    ReactGA.send({
+      hitType: "pageview",
+      page: window.location.pathname
+    })
   })
 
   const [loading, setLoading] = useState(true);

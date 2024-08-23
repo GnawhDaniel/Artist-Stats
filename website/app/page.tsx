@@ -1,11 +1,13 @@
 import Image from "next/image";
+import { useEffect } from "react";
 import ReactGA from "react-ga4";
 
 export default function Home() {
-  ReactGA.send({
-    hitType: "pageview",
-    page: "/",
-    title: "Home"
+  useEffect(()=>{
+    ReactGA.send({
+      hitType: "pageview",
+      page: window.location.pathname
+    })
   })
 
   return (
