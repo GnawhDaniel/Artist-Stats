@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { Teko } from "next/font/google";
-import { Analytics } from "@vercel/analytics/react"
-import { SpeedInsights } from "@vercel/speed-insights/next"
+import ReactGA from "react-ga4";
+
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -21,12 +21,11 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  ReactGA.initialize('G-GRDDY5DHXX');
   return (
     <html lang="en">
       <body className={teko.className}>
         {children}
-        <Analytics/>
-        <SpeedInsights/>
       </body>
     </html>
   );

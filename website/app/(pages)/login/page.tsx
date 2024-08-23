@@ -1,13 +1,17 @@
 // src/Components/Login.js
 "use client";
-import React, { useState } from "react";
-import { submitLoginForm } from "./submitLoginForm";
 import { navigate } from "@/functions/actions";
-// import { isAuthenticated } from "@/functions/auth";
 import { googleAuth } from "@/functions/api";
 import Image from "next/image";
+import ReactGA from "react-ga4";
+
 
 export default function Login() {
+  ReactGA.send({
+    hitType: "pageview",
+    page: "/login",
+    title: "Login"
+  })
 
   const handleLogin = async (e: any) => {
     e.preventDefault();

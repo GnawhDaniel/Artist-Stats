@@ -1,6 +1,13 @@
 import Image from "next/image";
+import ReactGA from "react-ga4";
 
 export default function Home() {
+  ReactGA.send({
+    hitType: "pageview",
+    page: "/",
+    title: "Home"
+  })
+
   return (
     <main className="flex min-h-screen flex-col items-center gap-y-16 justify-center p-10 lg:px-0">
       <div className="flex flex-col z-10 w-full max-w-5xl">
