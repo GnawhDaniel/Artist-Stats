@@ -9,8 +9,6 @@ import { usePathname, useSearchParams } from "next/navigation";
 import { User } from "@/components/interfaces";
 import { loadingElement } from "@/components/loading";
 import BottomBar from "@/components/bottombar";
-import ReactGA from "react-ga4";
-
 
 function VerticalText({ text }: { text: string }) {
   if (!text) {
@@ -34,12 +32,6 @@ function VerticalText({ text }: { text: string }) {
 }
 
 export default function GraphPage() {
-  useEffect(()=>{
-    ReactGA.send({
-      hitType: "pageview",
-      page: window.location.pathname
-    })
-  })
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState([]);
   const [minimum, setMinimum] = useState(0);

@@ -6,16 +6,9 @@ import { useEffect, useState } from "react";
 import { getUser } from "@/functions/api";
 import { loadingElement } from "@/components/loading";
 import BottomBar from "@/components/bottombar";
-import ReactGA from "react-ga4";
-
 
 export default function Settings() {
-  useEffect(()=>{
-    ReactGA.send({
-      hitType: "pageview",
-      page: window.location.pathname
-    })
-  })
+
 
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<User>();

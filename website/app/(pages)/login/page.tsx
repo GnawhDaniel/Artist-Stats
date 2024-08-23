@@ -3,18 +3,8 @@
 import { navigate } from "@/functions/actions";
 import { googleAuth } from "@/functions/api";
 import Image from "next/image";
-import { useEffect } from "react";
-import ReactGA from "react-ga4";
-
 
 export default function Login() {
-  useEffect(()=>{
-    ReactGA.send({
-      hitType: "pageview",
-      page: window.location.pathname
-    })
-  })
-
   const handleLogin = async (e: any) => {
     e.preventDefault();
     const response = await googleAuth();
@@ -38,11 +28,11 @@ export default function Login() {
             onClick={handleLogin}
             className="flex bg-white p-2 text-black items-center gap-2 rounded-2xl"
           >
-            <Image src="/google.svg" alt="" width={30} height={30}/>
+            <Image src="/google.svg" alt="" width={30} height={30} />
             <p>Sign in with Google</p>
           </button>
         </div>
       </div>
     </form>
   );
-};
+}

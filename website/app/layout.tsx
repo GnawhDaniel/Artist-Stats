@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { Teko } from "next/font/google";
-import ReactGA from "react-ga4";
-
+import { GoogleAnalytics } from '@next/third-parties/google'
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -21,11 +20,11 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  ReactGA.initialize('G-GRDDY5DHXX');
   return (
     <html lang="en">
       <body className={teko.className}>
         {children}
+        <GoogleAnalytics gaId="G-GRDDY5DHXX"></GoogleAnalytics>
       </body>
     </html>
   );

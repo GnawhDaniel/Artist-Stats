@@ -1,14 +1,7 @@
 import Image from "next/image";
 import { useEffect } from "react";
-import ReactGA from "react-ga4";
 
 export default function Home() {
-  useEffect(()=>{
-    ReactGA.send({
-      hitType: "pageview",
-      page: window.location.pathname
-    })
-  })
 
   return (
     <main className="flex min-h-screen flex-col items-center gap-y-16 justify-center p-10 lg:px-0">

@@ -4,7 +4,6 @@ import {
   deleteArtist,
   getAllArtists,
   getGenreCount,
-  getSpotifySearch,
   getUser,
 } from "@/functions/api";
 import { FollowerCount, GenreCount } from "@/components/counters";
@@ -18,8 +17,6 @@ import SimpleCharts from "@/components/PieChart";
 import { loadingElement } from "@/components/loading";
 import SearchBar from "@/components/SearchBar";
 import BottomBar from "@/components/bottombar";
-import ReactGA from "react-ga4";
-
 
 export default function MyArtists() {
   /*
@@ -31,12 +28,6 @@ export default function MyArtists() {
       - Might have to add spotify url field onto names db table
     - Delete feature on Following 
   */
-  useEffect(()=>{
-    ReactGA.send({
-      hitType: "pageview",
-      page: window.location.pathname
-    })
-  })
 
   const [genreCount, setGenreCount] = useState([]); // Sum of each genre (k-indie: 10, rap: 3, etc.)
   const [genreSum, setGenreSum] = useState(0); // Sum of all distinct genres
