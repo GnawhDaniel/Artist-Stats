@@ -62,37 +62,38 @@ def extract() -> None:
     if artist_ids == []:
         raise Exception("Extracting artists from DB went wrong.")
 
-    spotify_search_endpoint = 'https://api.spotify.com/v1/artists/'
+    spotify_search_endpoint = 'https://api.spotify.com/v1/artists?ids='
     access_token = _get_spotify_token()
+    headers = {"Authorization": "Bearer " + access_token}
 
-    # Get raw data from Spotify's API
-    artists_dict = {}
-    for artist_id in artist_ids:
-        try:
-            headers = {"Authorization": "Bearer " + access_token}
-            res = requests.get(spotify_search_endpoint+artist_id,
+
+    def get_artists_chunks(array, chunk_size=50): # Chunk size 50 because spotify batch limit
+        for i in range(0, len(array), chunk_size):
+            yield array[i:i + chunk_size]
+    
+    i = 0
+    for chunk in get_artists_chunks(artist_ids):
+        query = "%2C".join(chunk)
+        res = requests.get(spotify_search_endpoint + query,
                                headers=headers, timeout=20).json()
-            artist_name = res["name"]
-            artist_genres = res["genres"]
-            artist_followers = res['followers']['total']
-            artists_dict[artist_id] = {"artist_name": artist_name,
-                                       "genre": artist_genres,
-                                       "followers": artist_followers}
-        except KeyError:
-            # Case if Spotify artist account is deleted
-            logging.warning(f"Missing data for artist ID: {artist_id}")
-            continue
-        except Exception as e:
-            # All other exceptions
-            logging.error(f"Error processing artist ID {artist_id}: {str(e)}")
-            raise
-
-    df = pd.DataFrame.from_dict(artists_dict, orient='index')
-    df.index.name = 'artist_id'
-    df.reset_index(inplace=True)
-    df.to_csv("/tmp/extracted_data.csv", index=False)
-    return
-
-
-if __name__ == "__main__":
-    extract()
+        artists_dict = {}
+        try:
+            for artist in res['artists']:
+                artist_id = artist["id"]
+                artist_name = artist["name"]
+                artist_genres = artist["genres"]
+                artist_followers = artist['followers']['total']
+                artist_image = artist['images'][0]["url"] if artist['images'] else ''
+                artists_dict[artist_id] = {"artist_name": artist_name,
+                                            "genre": artist_genres,
+                                            "followers": artist_followers,
+                                            "image_url": artist_image}
+                
+            df = pd.DataFrame.from_dict(artists_dict, orient='index')
+            df.index.name = 'artist_id'
+            df.reset_index(inplace=True)
+            df.to_csv(f"/tmp/extracted_data_{i}.csv", index=False)
+            
+            i += 1
+        except:
+            raise Exception(f"Could not fetch artists with {spotify_search_endpoint+query}")

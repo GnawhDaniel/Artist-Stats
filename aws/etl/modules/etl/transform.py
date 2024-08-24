@@ -1,5 +1,6 @@
 import datetime
 import pandas as pd
+import glob, os
 
 def transform() -> None:
     """
@@ -7,23 +8,24 @@ def transform() -> None:
     Transform into three csv each representing the 3 tables 
     in PostgreSQL table on AWS RDS.
     """
-
-    data = pd.read_csv("/tmp/extracted_data.csv")
+    i = 0
+    for file in glob.glob("/tmp/extracted_data_*.csv"):
     
-    artists = data.loc[:, ['artist_id', 'followers']]
-    artists['date'] = datetime.datetime.now().date()
-    artists = artists.astype({'date': 'datetime64[ns]'})
-    artists.to_csv("/tmp/artists_table.csv", index=False)
+        data = pd.read_csv(file)
+        
+        artists = data.loc[:, ['artist_id', 'followers']]
+        artists['date'] = datetime.datetime.now().date()
+        artists = artists.astype({'date': 'datetime64[ns]'})
+        artists.to_csv(f"/tmp/artists_table_{i}.csv", index=False)
 
-    artist_genres = data.loc[:, ['artist_id', 'genre']]
-    artist_genres['genre'] = artist_genres['genre'].str.strip('[]').str.replace("'","").str.split(", ")
-    artist_genres = artist_genres.explode('genre')
-    artist_genres['genre'].loc[artist_genres['genre']==''] = 'none'
-    artist_genres.to_csv("/tmp/artist_genres_table.csv", index=False)
+        artist_genres = data.loc[:, ['artist_id', 'genre']]
+        artist_genres['genre'] = artist_genres['genre'].str.strip('[]').str.replace("'","").str.split(", ")
+        artist_genres = artist_genres.explode('genre')
+        artist_genres = artist_genres[artist_genres['genre'] != '']  # Drop rows where genre is empty
+        artist_genres.to_csv(f"/tmp/artist_genres_table_{i}.csv", index=False)
 
-    names = data.loc[:, ['artist_id', 'artist_name']]
-    names.to_csv("/tmp/names_table.csv", index=False)
-
-
-if __name__ == "__main__":
-    transform()
+        names = data.loc[:, ['artist_id', 'artist_name']]
+        names.to_csv(f"/tmp/names_table_{i}.csv", index=False)
+        
+        i += 1
+        os.remove(file)
