@@ -143,6 +143,7 @@ export default function Graph({
         data: followers,
         spanGaps: true,
         pointRadius: 5,
+        borderColor: "rgb(255, 255, 255)",
         pointBorderColor: dates.map((date, index) =>
           date === followedDate.toDateString() ? "rgb(147, 51, 234)" : "rgb(255, 255, 255)"
         ),
