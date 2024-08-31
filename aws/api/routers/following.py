@@ -106,7 +106,6 @@ async def addArtist(db: db_dependency, artist: addArtistReq, session_id: Annotat
                 artist_id=artist.artist_id,
                 followed_date=datetime.datetime.now(tz=datetime.UTC)
             )
-            print(artist_to_user)
             db.add(artist_to_user)
             db.commit()
 
@@ -184,11 +183,13 @@ async def fetch_artist_stats(
         ArtistStats.artist_id == id).order_by(ArtistStats.date).all()
 
     if artist:
+        followed_date = db.query(GoogleUserFollowing.followed_date).filter(GoogleUserFollowing.artist_id == id).first()
+        followed_date = followed_date[0].strftime('%Y-%m-%d')        
         artist = [{"date": i.date, "followers": i.followers} for i in artist]
         artist_min = min(artist, key=lambda x: x["followers"])
         artist_max = max(artist, key=lambda x: x["followers"])
 
-        return {"data": artist, "min_followers": artist_min, "max_followers": artist_max}
+        return {"data": artist, "min_followers": artist_min, "max_followers": artist_max, "followed_date": followed_date}
     else:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail=f"Could not find artist with id {id}")
