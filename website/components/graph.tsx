@@ -28,8 +28,7 @@ interface DataItem {
 
 interface ListProps {
   data: DataItem[];
-  minimum: any;
-  maximum: any;
+  followedDate: Date;
   artistName: string;
 }
 
@@ -80,8 +79,7 @@ function appendNullDates(data: DataItem[]) {
 
 export default function Graph({
   data,
-  minimum,
-  maximum,
+  followedDate,
   artistName,
 }: ListProps) {
   const data_transformed: { date: Date; followers: number | null }[] =
@@ -92,6 +90,10 @@ export default function Graph({
   const options = {
     responsive: true,
     maintainAspectRatio: false,
+    interaction: {
+      mode: "index" as const,
+      intersect: false,
+    },
     plugins: {
       legend: {
         position: "top" as const,
@@ -133,17 +135,20 @@ export default function Graph({
   const down = (ctx: any, value: string) =>
     ctx.p0.parsed.y > ctx.p1.parsed.y ? value : undefined;
 
-
   const dataset = {
     labels: dates,
     datasets: [
       {
         label: "Follower Count",
         data: followers,
-        borderColor: "rgb(255, 255, 255)",
-        backgroundColor: "rgba(255,255,255,0.8)",
         spanGaps: true,
         pointRadius: 5,
+        pointBorderColor: dates.map((date, index) =>
+          date === followedDate.toDateString() ? "rgb(147, 51, 234)" : "rgb(255, 255, 255)"
+        ),
+        pointBackgroundColor: dates.map((date, index) =>
+          date === followedDate.toDateString() ? "rgb(147, 51, 234, 0.7)" : "rgb(255, 255, 255, 0.50)"
+        ),
         segment: {
           borderColor: (ctx: any) => skipped(ctx, "gray") || down(ctx, "red") as string,
           borderDash: (ctx: any) => skipped(ctx, [1, 1]) as number[] | undefined,

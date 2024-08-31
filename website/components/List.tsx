@@ -2,7 +2,7 @@
 import { EllipsisVerticalIcon } from "@heroicons/react/24/outline";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Unstable_Popup as BasePopup } from "@mui/base/Unstable_Popup";
-import { TrashIcon } from "@heroicons/react/24/solid";
+import { TrashIcon, QuestionMarkCircleIcon } from "@heroicons/react/24/solid";
 import Image from "next/image";
 
 interface ListProps {
@@ -186,7 +186,7 @@ export function ListAdd({
                     alt=""
                   />
                 ) : (
-                  <></>
+                  <QuestionMarkCircleIcon className="rounded-full w-9"/>
                 )}
                 <li>{artist["artist_name"]}</li>
               </button>

@@ -48,6 +48,7 @@ export default function GraphPage() {
   const [currentArtist, setArtist] = useState("");
   const [user, setUser] = useState<User>();
   const [totalGrowth, setTotal] = useState<number>(0);
+  const [followedDate, setFollowedDate] = useState<Date>(new Date());
   // const searchParams = useSearchParams();
 
   const handleSearchResult = (data: any) => {
@@ -69,11 +70,7 @@ export default function GraphPage() {
 
       setLoading(false);
 
-      // if (searchParams) {
-      //   const artist_id = searchParams.get("artist");
-      //   const artist_name = searchParams.get("artist_name");
-      //   onClickArtist(artist_id ?? "", artist_name ?? "");
-      // }
+      // Check local storage for artists selected from Dashboard
       const storedData = sessionStorage.getItem("redirectData");
       if (storedData) {
         const data = JSON.parse(storedData);
@@ -91,6 +88,9 @@ export default function GraphPage() {
     setMinimum(res["min_followers"]["followers"]);
     setMax(res["max_followers"]["followers"]);
     setArtist(artist_name);
+
+    const [year, month, day] = res["followed_date"].split("-").map(Number);
+    setFollowedDate(new Date(Date.UTC(year, month - 1, day)))
   };
 
   return (
@@ -162,7 +162,7 @@ export default function GraphPage() {
         ) : (
           <>
             <div className="flex flex-col w-full p-4 gap-5 h-[93vh]">
-              <Graph artistName={currentArtist} data={data} minimum={minimum} maximum={maximum}></Graph>
+              <Graph artistName={currentArtist} data={data} followedDate={followedDate}></Graph>
             </div>
             <div className="hidden xl:block">
               <VerticalText text={currentArtist} growth={totalGrowth}/>
